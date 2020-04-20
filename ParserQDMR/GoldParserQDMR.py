@@ -16,6 +16,10 @@ class GoldParserQDMR:
     TARGET_REFERENCE        =   '{}'
     
     @staticmethod
+    def operators_to_list(operators):
+        return ast.literal_eval(operators)
+    
+    @staticmethod
     def decomposition_to_list(decomposition):
         return decomposition.split(GoldParserQDMR.GOLD_TOKEN_SPLITTER)
     
@@ -33,7 +37,7 @@ class GoldParserQDMR:
         
     @staticmethod
     def parse(decomposition, operators):
-        operators_list      = ast.literal_eval(operators)
+        operators_list      = GoldParserQDMR.operators_to_list(operators)
         decomposition_list  = GoldParserQDMR.decomposition_to_list(decomposition)
         # If decompositions and operators lengths are not the same
         if len(decomposition_list) != len(operators_list):

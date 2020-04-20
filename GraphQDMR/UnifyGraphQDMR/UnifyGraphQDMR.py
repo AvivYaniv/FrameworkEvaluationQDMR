@@ -11,6 +11,7 @@ class UnifyGraphQDMR:
         self.hooks = hooks
 
     def convert(self, graph_qdmr):
+        # TODO : Check if graph is a LIST therefore no vertex action is possible (commutative action requires more than one argument)
         self.apply_vertices_actions(graph_qdmr)
         if self.hooks.get(UnifyGraphQDMR.HOOK_NAME_AFTER_VERTICES_ACTIONS):
             self.hooks[UnifyGraphQDMR.HOOK_NAME_AFTER_VERTICES_ACTIONS]()
