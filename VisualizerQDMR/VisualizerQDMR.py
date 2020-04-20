@@ -15,7 +15,7 @@ class VisualizerQDMR:
             'edge_color' : 'green',
             'font_color' : 'red',
             'arrowstyle': '-|>',
-            'arrowsize': 12,
+            'arrowsize': 20,
             }
         nx.draw_networkx(nx_graph, arrows=True, **options)
         pylab.show()
