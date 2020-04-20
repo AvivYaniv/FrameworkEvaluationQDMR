@@ -29,6 +29,9 @@ class VertexQDMR:
         for v in self.outgoing:
             yield v
             
+    # TODO : Add comparator to sort INcoming vertices list to unify form
+    # i.e. Lexicographic comparator
+            
     def __str__(self):
         v_str           = f'{self.vid} : {self.operation} [{self.step_desc}]'
         incoming_vids   = [ v.vid for v in self.incoming_gen() ]

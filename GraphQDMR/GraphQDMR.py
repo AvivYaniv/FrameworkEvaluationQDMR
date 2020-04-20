@@ -33,7 +33,8 @@ class GraphQDMR:
         v_out.add_incoming(v_in)
         return True
     
-    def swap_vertices_step_decs(self, vid_1, vid_2):
+    # Invariant : same number of incoming edges
+    def swap_vertices_same_operators(self, vid_1, vid_2):
         v_1         =   self.vertices.get(vid_1,    None)
         v_2         =   self.vertices.get(vid_2,    None)
         # If either vertex not found
@@ -44,6 +45,25 @@ class GraphQDMR:
         v_2.step_desc   = temp_desc
         return True
     
+    # Invariant : same number of incoming edges
+    def swap_vertices_diffrent_operators(self, vid_1, vid_2):
+        v_1         =   self.vertices.get(vid_1,    None)
+        v_2         =   self.vertices.get(vid_2,    None)
+        # If either vertex not found
+        if None in [v_1, v_2]:
+            return False        
+        temp_desc       = v_1.step_desc
+        v_1.step_desc   = v_2.step_desc
+        v_2.step_desc   = temp_desc
+        temp_operation  = v_1.operation
+        v_1.operation   = v_2.operation
+        v_2.operation   = temp_operation
+        return True
+
+    def vertices_gen(self):
+        for v in self.vertices:
+            yield v
+
     def adj_list_str(self):
         graph_str = ''
         for v_id, v in self.vertices.items():
