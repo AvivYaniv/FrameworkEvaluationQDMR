@@ -14,7 +14,7 @@ class UnifyGraphQDMR:
         self.apply_vertices_actions(graph_qdmr)
         if self.hooks.get(UnifyGraphQDMR.HOOK_NAME_AFTER_VERTICES_ACTIONS):
             self.hooks[UnifyGraphQDMR.HOOK_NAME_AFTER_VERTICES_ACTIONS]()
-        # TODO : Check if graph is a LIST therefore no structure action is possible
+        # TODO : Check if graph is a LIST therefore no structure action is possible (SOME CASES)
         self.apply_structure_actions(graph_qdmr)
         if self.hooks.get(UnifyGraphQDMR.HOOK_NAME_AFTER_STRUCTURE_ACTIONS):
             self.hooks[UnifyGraphQDMR.HOOK_NAME_AFTER_STRUCTURE_ACTIONS]()

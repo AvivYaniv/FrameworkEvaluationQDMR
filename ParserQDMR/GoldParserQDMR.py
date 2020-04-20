@@ -1,15 +1,19 @@
 import re
+import ast
 
 from GraphQDMR.GraphQDMR import GraphQDMR
 from GraphQDMR.VertexQDMR import VertexQDMR
 from GraphQDMR.OperationQDMR import OperationQDMR
 
 class GoldParserQDMR:
-    GOLD_TOKEN_SPLITTER =   ';'
+    GOLD_TOKEN_SPLITTER     =   ';'
     
-    REFERENCE_REGEXP    =   r'#\d+'
+    REFERACE_PREFIX         =   '#'
+    REFERACE_PREFIX_LENGTH  =   len(REFERACE_PREFIX)
     
-    TARGET_REFERENCE    =   '{}'
+    REFERENCE_REGEXP        =   REFERACE_PREFIX + r'\d+'
+    
+    TARGET_REFERENCE        =   '{}'
     
     @staticmethod
     def decomposition_to_list(decomposition):
@@ -25,11 +29,12 @@ class GoldParserQDMR:
     
     @staticmethod
     def parse_incoming(raw_decomposition):
-        return [int(m[1:]) for m in re.findall(GoldParserQDMR.REFERENCE_REGEXP, raw_decomposition)]
+        return [int(m[GoldParserQDMR.REFERACE_PREFIX_LENGTH:]) for m in re.findall(GoldParserQDMR.REFERENCE_REGEXP, raw_decomposition)]
         
     @staticmethod
-    def parse(decomposition, operators_list):
-        decomposition_list = GoldParserQDMR.decomposition_to_list(decomposition)
+    def parse(decomposition, operators):
+        operators_list      = ast.literal_eval(operators)
+        decomposition_list  = GoldParserQDMR.decomposition_to_list(decomposition)
         # If decompositions and operators lengths are not the same
         if len(decomposition_list) != len(operators_list):
             print('Error! decomposition and operators mismatch')

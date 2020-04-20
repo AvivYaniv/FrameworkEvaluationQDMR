@@ -1,4 +1,3 @@
-import ast
 import csv
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR
 
@@ -23,10 +22,10 @@ class GoldReader:
         INDEX_OPERATORS             = q.index("operators")
         for r in rows[1:]:
             decomposition           = r[INDEX_DECOMPOSITION]
-            operators_list          = ast.literal_eval(r[INDEX_OPERATORS])
-            if not decomposition or not operators_list:
+            operators               = r[INDEX_OPERATORS]
+            if not decomposition or not operators:
                 continue
-            qdmr_graph              = GoldParserQDMR.parse(decomposition, operators_list)
+            qdmr_graph              = GoldParserQDMR.parse(decomposition, operators)
             qdmr_graph.raw_question = r[INDEX_QUESTION]
             graphs.append(qdmr_graph)
         return graphs
