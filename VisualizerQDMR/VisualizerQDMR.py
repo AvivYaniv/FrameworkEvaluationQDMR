@@ -1,0 +1,3 @@
+
+class VisualizerQDMR:
+    pass
