@@ -1,5 +1,6 @@
 
 from GraphQDMR import *
+from VisualizerQDMR import *
 from LoaderQDMR.GoldLoadrQDMR import GoldLoadrQDMR
 
 def example_graph_1():
@@ -26,6 +27,8 @@ def example_graph_1():
     
     print(g)
     
+    return g
+    
 def example_graph_2():
     v1 = VertexQDMR(OperationQDMR.SELECT,       'return phone number of  1031 Daugavpils Parkway')
     v2 = VertexQDMR(OperationQDMR.SELECT,       'return postal code of  1031 Daugavpils Parkway')
@@ -42,9 +45,14 @@ def example_graph_2():
     
     print(g)
     
-if '__main__' == __name__:
+def convert_graph_1():
     decomposition   = 'return bookstores ;return number of  #1 ;return if  #2 is equal to  two ;return light ;return #4 that is bright ;return windows of #1 ;return #1 where  #5 is visible through #6 ;return number of  #7 ;return if  #8 is at least one ;return if  both  #3 and #9 are true'
     operators_list  = ['select', 'aggregate', 'boolean', 'select', 'filter', 'project', 'comparative', 'aggregate', 'boolean', 'boolean']
-
     graph           = GoldLoadrQDMR.load(decomposition, operators_list)
     print(graph)
+    return graph
+    
+if '__main__' == __name__:
+    graph_1     = example_graph_1()
+    VisualizerQDMR.visualize(graph_1)
+    

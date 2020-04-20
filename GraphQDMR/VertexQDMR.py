@@ -30,8 +30,8 @@ class VertexQDMR:
             yield v
             
     def __str__(self):
-        v_str = self.step_desc
-        incoming_vids = [v.vid for v in self.incoming_gen()]
+        v_str           = f'{self.vid} : {self.operation} [{self.step_desc}]'
+        incoming_vids   = [ v.vid for v in self.incoming_gen() ]
         if incoming_vids:
             v_str = v_str.format(*incoming_vids)
         return v_str

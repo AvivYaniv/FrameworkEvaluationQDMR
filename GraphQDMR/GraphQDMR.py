@@ -56,6 +56,6 @@ class GraphQDMR:
     def __str__(self):
         graph_str = ''
         for v in self.vertices.values():
-            graph_str += f'{v.vid} : {v.operation} [{v}]\n'
+            graph_str += f'{v}\n'
         return graph_str
     
