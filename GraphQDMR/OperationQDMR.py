@@ -16,7 +16,7 @@ class OperationQDMR(Enum):
     BOOLEAN             = auto()  
     ARITHMETIC          = auto()  
     COMPARISON          = auto()
-    UNDEFINED           = auto()
+    NONE                = auto()
     
     def __str__(self):
         return f'{self.name}'

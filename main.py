@@ -1,7 +1,8 @@
 
 from GraphQDMR import *
 from VisualizerQDMR import *
-from LoaderQDMR.GoldLoadrQDMR import GoldLoadrQDMR
+from ParserQDMR import *
+from ReaderQDMR.GoldReader import GoldReader
 
 def example_graph_1():
     v1 = VertexQDMR(OperationQDMR.SELECT,       'return papers')
@@ -48,11 +49,12 @@ def example_graph_2():
 def convert_graph_1():
     decomposition   = 'return bookstores ;return number of  #1 ;return if  #2 is equal to  two ;return light ;return #4 that is bright ;return windows of #1 ;return #1 where  #5 is visible through #6 ;return number of  #7 ;return if  #8 is at least one ;return if  both  #3 and #9 are true'
     operators_list  = ['select', 'aggregate', 'boolean', 'select', 'filter', 'project', 'comparative', 'aggregate', 'boolean', 'boolean']
-    graph           = GoldLoadrQDMR.load(decomposition, operators_list)
+    graph           = GoldParserQDMR.parse(decomposition, operators_list)
     print(graph)
     return graph
     
 if '__main__' == __name__:
-    graph_1     = example_graph_1()
-    VisualizerQDMR.visualize(graph_1)
+    graphs = GoldReader.read_file_qdmr_graphs(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
+    for g in graphs:
+        VisualizerQDMR.visualize(g)
     

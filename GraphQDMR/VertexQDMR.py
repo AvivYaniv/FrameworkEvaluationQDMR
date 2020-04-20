@@ -1,7 +1,7 @@
 from .OperationQDMR import OperationQDMR
 
 class VertexQDMR:
-    _operation  =   OperationQDMR.UNDEFINED
+    _operation  =   OperationQDMR.NONE
     
     def __init__(self, operation, step_desc=None):
         self.step_desc  =   step_desc if step_desc else ''

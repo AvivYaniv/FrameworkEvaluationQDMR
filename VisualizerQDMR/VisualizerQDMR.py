@@ -17,5 +17,8 @@ class VisualizerQDMR:
             'arrowstyle': '-|>',
             'arrowsize': 20,
             }
-        nx.draw_networkx(nx_graph, arrows=True, **options)
+        if hasattr(graph_qdmr, 'raw_question'):
+            raw_question = graph_qdmr.raw_question
+            plt.title(raw_question)
+        nx.draw_networkx(nx_graph, arrows=True, **options)        
         pylab.show()
