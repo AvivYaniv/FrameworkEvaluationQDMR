@@ -12,4 +12,4 @@ class EvaluatorQDR:
             return True
         unifyer.apply_structure_actions(prediction_graph_qdmr)
         # TODO : Check graph structure, by going on each vertex and check if all incoming vertex descriptions are the same (without comparing numbers, "as-is")
-        
+        # More about; switch edges direction, then, go in BFS and check as decribed above
