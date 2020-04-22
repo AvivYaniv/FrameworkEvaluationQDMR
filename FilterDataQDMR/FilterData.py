@@ -67,22 +67,42 @@ class SublistFilter(Filter):
 
     def filter(self, decomposition, operators):
         """returns true if self.operators_sublist (or a permutation of it) is a sublist of operators"""
-        # give each operator from the sublist a unique number
-        unique_numbers = {}
+
+        def all_zeros(d):
+            """iterate on a dict, and return True <=> all the keys have value=0"""
+            for key in d.keys():
+                if d[key] != 0:
+                    return False
+            return True
+
+        list_len = len(operators)
         sublist_len = len(self.operator_sublist)
-        for i, operator in enumerate(self.operator_sublist):
-            unique_numbers[operator] = 2**i
+        if sublist_len > list_len:
+            return False
 
-        # calculate the sum of the sublist
-        permutation_expected_sum = 2 ** sublist_len - 1
+        # for each operator from sublist, init appearances to 1
+        operator_apperances = {}
+        for operator in self.operator_sublist:
+            operator_apperances[operator] = 1
 
-        # convert the 'operators' list to numbers, according to the unique_numbers
-        operators_as_numbers = [unique_numbers.get(operator, 0) for operator in operators]
+        # --iterate on 'operators' with a sliding window--
+        # create first window:
+        for i in range(sublist_len):
+            temp_operator = operators[i]
+            if temp_operator in operator_apperances.keys():
+                operator_apperances[temp_operator] -= 1
+        if all_zeros(operator_apperances):
+            return True
 
-        # for any possible start index, calculate the sum of 'sublist_len' adjacent numbers.
-        # this sum will be equal to 'permutation_expected_sum' only if they are permutation of one another.
+        # move with sliding window
         for i in range(len(operators) - sublist_len):
-            if sum(operators_as_numbers[i:i+sublist_len]) == permutation_expected_sum:
+            old_oper = operators[i]
+            new_oper = operators[i+sublist_len-1]
+            if old_oper in operator_apperances.keys():
+                operator_apperances[old_oper] += 1
+            if new_oper in operator_apperances.keys():
+                operator_apperances[new_oper] -= 1
+            if all_zeros(operator_apperances):
                 return True
         return False
 
