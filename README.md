@@ -1,5 +1,5 @@
 # FrameworkEvaluationQDMR
-This project if a framework for QDMR graphs as introcuced in the paper [Break It Down: A Question Understanding Benchmark](https://arxiv.org/abs/2001.11770)
+This project is a framework for QDMR graphs as introcuced in the paper [Break It Down: A Question Understanding Benchmark](https://arxiv.org/abs/2001.11770)
 <br />Framework includes several modules:
 <br />1. QDMR graphs
 <br />1.1. Evaluation of equivalance
