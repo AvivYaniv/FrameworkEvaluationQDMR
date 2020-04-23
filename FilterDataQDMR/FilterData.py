@@ -117,12 +117,13 @@ class Interesting(Filter):
 
     def __init__(self):
         self.name = "interesting"
-        self.min_len = 5
+        self.max_len = 8
+        self.min_len = 4
         self.min_interesting_operations = 3
 
     def filter(self, decomposition, operators):
         """returns true if graph is a 2 head snake """
-        if len(operators) <= self.min_len:
+        if len(operators) <= self.min_len or len(operators) > self.max_len:
             return False
         interesting = 0
         for operator in operators:
