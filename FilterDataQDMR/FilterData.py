@@ -1,14 +1,36 @@
 import csv
 from abc import abstractmethod, ABC
-
 from GraphQDMR import OperationQDMR as op
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR
 from ReaderQDMR import GoldReader
 
+####################
+# csv operations   #
+####################
 
-####################
-# possible filters #
-####################
+"""
+def get_file_location_at_parent_folder(file_name):
+    dirname = os.path.dirname(__file__)
+    par_dir = os.path.abspath(os.path.join(dirname, os.pardir))
+    input_csv_file = os.path.join(par_dir, file_name)
+    return input_csv_file
+"""
+
+
+def save_csv_file(rows, output_csv_file):
+    print(f"saving csv to {output_csv_file}")
+    with open(output_csv_file, 'w', newline='', encoding='utf-8') as csvfile:
+        writer = csv.writer(csvfile)
+        for r in rows:
+            writer.writerow(r)
+
+
+###########################
+# OPERATORS list filters  #
+###########################
+"""filter QDMR queries according to their OPERATORS list"""
+
+
 class Filter(ABC):
     @abstractmethod
     def filter(self):
@@ -38,7 +60,7 @@ class ChainFilter(Filter):
                 chain_len += 1
             else:
                 if chain_len >= 2:
-                   chains.append((chain_start_index, chain_len))
+                    chains.append((chain_start_index, chain_len))
                 chain_len = 0
 
         if temp_operator == operator and chain_len >= 2:
@@ -58,7 +80,7 @@ class ChainFilter(Filter):
         return ChainFilter.detect_chain(operators, self.operator)
 
 
-class SublistFilter(Filter):
+class PermutationFilter(Filter):
     def __init__(self, operators):
         self.operator_sublist = [str(operator).lower() for operator in operators]
         self.name = "sublist_of_" + '_'.join(self.operator_sublist)
@@ -81,7 +103,10 @@ class SublistFilter(Filter):
         # for each operator from sublist, init appearances to 1
         operator_apperances = {}
         for operator in self.operator_sublist:
-            operator_apperances[operator] = 1
+            operator_apperances[operator] = 0
+
+        for operator in self.operator_sublist:
+            operator_apperances[operator] += 1
 
         # --iterate on 'operators' with a sliding window--
         # create first window:
@@ -95,7 +120,7 @@ class SublistFilter(Filter):
         # move with sliding window
         for i in range(len(operators) - sublist_len):
             old_oper = operators[i]
-            new_oper = operators[i+sublist_len-1]
+            new_oper = operators[i + sublist_len - 1]
             if old_oper in operator_apperances.keys():
                 operator_apperances[old_oper] += 1
             if new_oper in operator_apperances.keys():
@@ -107,13 +132,14 @@ class SublistFilter(Filter):
 
 class Interesting(Filter):
     """find interesting graphs - long graphs with interesting operations"""
-    boring_operations = [str(op.SELECT).lower(), str(op.FILTER).lower(), str(op.PROJECT).lower(), str(op.AGGREGATE).lower()]
+    boring_operations = [str(op.SELECT).lower(), str(op.FILTER).lower(), str(op.PROJECT).lower(),
+                         str(op.AGGREGATE).lower()]
 
     # at reality, those operators can have 1/2 incoming edge/s
     interesting_operations = [str(op.SUPERLATIVE).lower(), str(op.COMPARATIVE).lower(),
-                                   str(op.UNION).lower(), str(op.INTERSECTION).lower(), str(op.DISCARD).lower(),
-                                   str(op.SORT).lower(), str(op.BOOLEAN).lower(),  str(op.ARITHMETIC).lower(),
-                                   ]
+                              str(op.UNION).lower(), str(op.INTERSECTION).lower(), str(op.DISCARD).lower(),
+                              str(op.SORT).lower(), str(op.BOOLEAN).lower(), str(op.ARITHMETIC).lower(),
+                              ]
 
     def __init__(self):
         self.name = "interesting"
@@ -133,27 +159,58 @@ class Interesting(Filter):
             return True
         return False
 
+
 ####################
+#  graph filters   #
+####################
+"""filter QDMR queries according to the 'GraphQDMR' object which represents them.
+enables filter according to input/output edges, neighbors, paths with certain operators and more"""
+
+
+class GraphPath(Filter):
+    """ return true if Graph has path [operators[0]...operators[n-1]]
+    e.g: for input operators=["select","filter"], the graph: [select-->select-->filter] is legit(where --> is an edge)"""
+
+    def __init__(self, operators):
+        self.operator_sublist = operators
+        self.name = "sublist_of_" + '_'.join([str(operator).lower() for operator in operators])
+
+    def filter(self, graph):
+        graph_opers = graph.get_operations()
+        if graph_opers != [op.SELECT, op.SELECT, op.FILTER, op.FILTER]:
+            return False
+        vertices = graph.vertices
+        chains = []
+        for vertice_id, vertice in vertices.items():
+            current = [vertice]
+            for i, target_operator in enumerate(self.operator_sublist):
+                found = False
+                for c in current:
+                    if c.operation == target_operator:
+                        found = True
+                        break
+                if not found:
+                    break
+                current = vertice.outgoing
+            if i == len(self.operator_sublist) - 1:
+                chains.append(vertice_id)
+        return len(chains) > 0
+
+
+####################
+
+
 class FilterData:
     """ load csv file of gold qdmr questions, filter the questions and save to a new csv file.
      This is useful to test new single vertex/structure Actions"""
 
-
-
-
     @staticmethod
-    def save_csv_file(rows, output_csv_file):
-        print(f"saving csv to {output_csv_file}")
-        with open(output_csv_file, 'w', newline='', encoding='utf-8') as csvfile:
-            writer = csv.writer(csvfile)
-            for r in rows:
-                writer.writerow(r)
-
-    @staticmethod
-    def filter_data(filter, input_csv_file=GoldReader.TRAIN_QUESTIONS_FILE_NAME):
-        """
+    def filter_data_according_to_operatorlist(filter, output_csv_file="",
+                                              input_csv_file=GoldReader.TRAIN_QUESTIONS_FILE_NAME):
+        """ use this function to active  'graph filter'
         :param filter: a class with "filter" function to apply on questions.
         returns True if question is good(we want to save it), else False
+        :param output_csv_file: a path save the result csv file
         :param input_csv_file: a path to the input csv file
         """
         rows = GoldReader.read_file_rows(input_csv_file)
@@ -174,19 +231,43 @@ class FilterData:
                 filtered_rows.append(r)
 
         # save rows to csv file
-        print(f"{len(filtered_rows)-1} questions survived the filter")
-        FilterData.save_csv_file(filtered_rows, output_csv_file=f"filtered_{filter.name}.csv")
+        print(f"{len(filtered_rows) - 1} questions survived the filter")
+        if output_csv_file == "":
+            output_csv_file = f"filtered_{filter.name}.csv"
+        save_csv_file(filtered_rows, output_csv_file=output_csv_file)
+
+    @staticmethod
+    def filter_data_according_to_graph(filter, output_csv_file="", input_csv_file=GoldReader.TRAIN_QUESTIONS_FILE_NAME):
+        """ use this function to active  'operatorList filter'
+        :param filter: a class with "filter" function to apply on questions.
+        returns True if question is good(we want to save it), else False
+        :param output_csv_file: a path save the result csv file
+        :param input_csv_file: a path to the input csv file
+        """
+        rows = GoldReader.read_file_rows(input_csv_file)
+        graphs = GoldReader.read_file_qdmr_graphs(input_csv_file)
+        q = rows[0]
+        filtered_rows = [q]
+        for r, graph in zip(rows[1:], graphs):
+            if filter.filter(graph):
+                filtered_rows.append(r)  # save the question
+
+        # save rows to csv file
+        print(f"{len(filtered_rows) - 1} questions survived the filter")
+        if output_csv_file == "":
+            output_csv_file = f"filtered_{filter.name}.csv"
+        save_csv_file(filtered_rows, output_csv_file=output_csv_file)
 
 
 if '__main__' == __name__:
+    # permutation_filter = PermutationFilter([op.SELECT, op.SELECT, op.FILTER, op.FILTER])
+    # FilterData.filter_data_according_to_operatorlist(filter=permutation_filter)
 
-    # sublist_filter = SublistFilter([op.SELECT, op.AGGREGATE])
-    # FilterData.filter_data(filter=sublist_filter)
+    # chain_filter = ChainFilter(op.FILTER)
+    # FilterData.filter_data_according_to_operatorlist(filter=chain_filter)
 
-    # chain_filter = ChainFilter(op.PROJECT)
-    # FilterData.filter_data(filter=chain_filter)
+    # interesting = Interesting()
+    # FilterData.filter_data_according_to_operatorlist(filter=interesting)
 
-    interesting = Interesting()
-    FilterData.filter_data(filter=interesting)
-
-
+    graph_path = GraphPath([op.SELECT, op.FILTER, op.SELECT])
+    FilterData.filter_data_according_to_graph(filter=graph_path, output_csv_file="ron.csv")

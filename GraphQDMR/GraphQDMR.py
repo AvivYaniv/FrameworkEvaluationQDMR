@@ -8,7 +8,7 @@ class GraphQDMR:
         return self.vertices.keys()
     
     def get_operations(self):
-        return [v.operation for v in self.vertices]
+        return [v.operation for v in self.vertices.values()]
     
     def get_operations_histogram(self):
         operations_histogram = {}
