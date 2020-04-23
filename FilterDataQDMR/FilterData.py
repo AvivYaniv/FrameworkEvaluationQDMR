@@ -1,7 +1,7 @@
 import csv
 from abc import abstractmethod, ABC
 
-from GraphQDMR import OperationQDMR
+from GraphQDMR import OperationQDMR as op
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR
 from ReaderQDMR import GoldReader
 
@@ -14,9 +14,10 @@ class Filter(ABC):
     def filter(self):
         raise NotImplementedError
 
+
 class ChainFilter(Filter):
 
-    def __init__(self, operator: OperationQDMR):
+    def __init__(self, operator: op):
         self.operator = str(operator).lower()
         self.name = "chain_of_" + str(operator)
 
@@ -57,11 +58,8 @@ class ChainFilter(Filter):
         return ChainFilter.detect_chain(operators, self.operator)
 
 
-
-
-
 class SublistFilter(Filter):
-    def __init__(self, operators):  #: [OperationQDMR]
+    def __init__(self, operators):
         self.operator_sublist = [str(operator).lower() for operator in operators]
         self.name = "sublist_of_" + '_'.join(self.operator_sublist)
 
@@ -106,6 +104,33 @@ class SublistFilter(Filter):
                 return True
         return False
 
+
+class Interesting(Filter):
+    """find interesting graphs - long graphs with interesting operations"""
+    boring_operations = [str(op.SELECT).lower(), str(op.FILTER).lower(), str(op.PROJECT).lower(), str(op.AGGREGATE).lower()]
+
+    # at reality, those operators can have 1/2 incoming edge/s
+    interesting_operations = [str(op.SUPERLATIVE).lower(), str(op.COMPARATIVE).lower(),
+                                   str(op.UNION).lower(), str(op.INTERSECTION).lower(), str(op.DISCARD).lower(),
+                                   str(op.SORT).lower(), str(op.BOOLEAN).lower(),  str(op.ARITHMETIC).lower(),
+                                   ]
+
+    def __init__(self):
+        self.name = "interesting"
+        self.min_len = 5
+        self.min_interesting_operations = 3
+
+    def filter(self, decomposition, operators):
+        """returns true if graph is a 2 head snake """
+        if len(operators) <= self.min_len:
+            return False
+        interesting = 0
+        for operator in operators:
+            if operator in Interesting.interesting_operations:
+                interesting += 1
+        if interesting >= self.min_interesting_operations:
+            return True
+        return False
 
 ####################
 class FilterData:
@@ -154,9 +179,13 @@ class FilterData:
 
 if '__main__' == __name__:
 
-    sublist_filter = SublistFilter([OperationQDMR.SELECT, OperationQDMR.AGGREGATE])
-    FilterData.filter_data(filter=sublist_filter)
+    # sublist_filter = SublistFilter([op.SELECT, op.AGGREGATE])
+    # FilterData.filter_data(filter=sublist_filter)
 
-    chain_filter = ChainFilter(OperationQDMR.FILTER)
-    FilterData.filter_data(filter=chain_filter)
+    # chain_filter = ChainFilter(op.PROJECT)
+    # FilterData.filter_data(filter=chain_filter)
+
+    interesting = Interesting()
+    FilterData.filter_data(filter=interesting)
+
 

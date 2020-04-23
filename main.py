@@ -54,6 +54,7 @@ def convert_graph_1():
     return graph
     
 if '__main__' == __name__:
+    # graphs = GoldReader.read_file_qdmr_graphs("filtered_interesting.csv")
     graphs = GoldReader.read_file_qdmr_graphs(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
     for g in graphs:
         VisualizerQDMR.visualize(g)
