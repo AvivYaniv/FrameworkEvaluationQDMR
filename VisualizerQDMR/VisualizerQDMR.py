@@ -9,16 +9,24 @@ class VisualizerQDMR:
     def visualize(graph_qdmr):
         nx_graph    = GraphQDMR2NetworkXConverter.convert(graph_qdmr)
         options     = {
-            'node_color': 'blue',
+            'node_color': 'yellow',
             'node_size': 50,
             'width': 3,
-            'edge_color' : 'green',
-            'font_color' : 'red',
+            'edge_color' : 'orange',
+            'font_color' : 'green',
             'arrowstyle': '-|>',
             'arrowsize': 20,
+
             }
         if hasattr(graph_qdmr, 'raw_question'):
             raw_question = graph_qdmr.raw_question
             plt.title(raw_question)
-        nx.draw_networkx(nx_graph, arrows=True, **options)        
-        pylab.show()
+        pos = nx.circular_layout(nx_graph)
+        nx.draw_networkx(nx_graph, pos=pos, arrows=True, **options)
+        x_values, y_values = zip(*pos.values())
+        x_max = max(x_values)
+        x_min = min(x_values)
+        x_margin = (x_max - x_min) * 0.25
+        plt.xlim(x_min - x_margin, x_max + x_margin)
+        plt.get_current_fig_manager().window.state('zoomed')
+        plt.show()
