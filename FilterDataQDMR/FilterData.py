@@ -104,7 +104,7 @@ class PermutationFilter(Filter):
     def __init__(self, operators, min_len=None, max_len=None):
         super(PermutationFilter, self).__init__(min_len, max_len)
         self.operator_sublist = [str(operator).lower() for operator in operators]
-        self.name = "sublist_of_" + '_'.join(self.operator_sublist)
+        self.name = "permutation_of_" + '_'.join(self.operator_sublist)
 
     def filter(self, decomposition, operators):
         """returns true if self.operators_sublist (or a permutation of it) is a sublist of operators"""
@@ -198,7 +198,7 @@ class GraphPath(Filter):
     def __init__(self, operators, min_len=None, max_len=None):
         super(GraphPath, self).__init__(min_len, max_len)
         self.operator_sublist = operators
-        self.name = "sublist_of_" + '_'.join([str(operator).lower() for operator in operators])
+        self.name = "graphPath_of_" + '_'.join([str(operator).lower() for operator in operators])
 
     def filter(self, graph):
         def filter_rec(vertice, operator_sublist):
@@ -223,6 +223,52 @@ class GraphPath(Filter):
         return False
 
 
+class GraphHasNodeWithIncomingEdges(Filter):
+    """ return true if Graph has vertice with operator 'self.operator', that has incoming edges 'self.incomings'
+    e.g: creating the filter with parameters "operator=op.COMPARATIVE, incomings=[op.AGGREGATE, op.FILTER]"
+    and then applying it on the graph below:
+    AGGREGATE----
+                |
+                V
+    PROJECT---> COMPARATIVE
+                ^
+                |
+    FILTER------
+
+    will return True
+    """
+    def __init__(self, operator, incomings, min_len=None, max_len=None):
+        super(GraphHasNodeWithIncomingEdges, self).__init__(min_len, max_len)
+        self.operator = operator
+        self.incomings = incomings
+        self.name = f"graph_has_{str(operator).lower()}_with_inputs_" + '_'.join([str(operator).lower() for operator in incomings])
+
+    def filter(self, graph):
+        def has_desiered_incoming_edges(vertice):
+            # count the required operators to pass as input edges
+            input_operators_apperances = {}
+            for operator in self.incomings:
+                input_operators_apperances[operator.name] = 0
+
+            for operator in self.incomings:
+                input_operators_apperances[operator.name] -= 1
+
+            # count the actual operators from input edges
+            for neighbore in vertice.incoming:
+                if neighbore.operation.name in input_operators_apperances.keys():
+                    input_operators_apperances[neighbore.operation.name] += 1
+
+            # check that actual operators are good enough
+            for _, value in input_operators_apperances.items():
+                if value < 0:
+                    return False
+            return True
+
+        vertices = graph.vertices
+        for _, vertice in vertices.items():
+            if vertice.operation == self.operator and has_desiered_incoming_edges(vertice):
+                return True
+        return False
 
 
 
@@ -303,5 +349,8 @@ if '__main__' == __name__:
     # interesting = Interesting()
     # FilterData.filter_data_according_to_operatorlist(filter=interesting)
 
-    graph_path = GraphPath([op.SELECT, op.FILTER, op.SELECT])
-    FilterData.filter_data_according_to_graph(filter=graph_path, output_csv_file="ron.csv")
+    with_desiered_incoming_edges = GraphHasNodeWithIncomingEdges(operator=op.COMPARATIVE, incomings=[op.AGGREGATE, op.FILTER])
+    FilterData.filter_data_according_to_graph(filter=with_desiered_incoming_edges, output_csv_file="ron.csv")
+
+    # graph_path = GraphPath([op.SELECT], min_len=10)
+    # FilterData.filter_data_according_to_graph(filter=graph_path, output_csv_file="ron.csv")
