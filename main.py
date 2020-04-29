@@ -4,6 +4,86 @@ from VisualizerQDMR import *
 from ParserQDMR import *
 from ReaderQDMR.GoldReader import GoldReader
 
+def example_graph_0_1():
+    v1 = VertexQDMR(OperationQDMR.SELECT,       'return ball')
+    v2 = VertexQDMR(OperationQDMR.PROJECT,      'return {} that is partially hidden by ball')
+    v3 = VertexQDMR(OperationQDMR.PROJECT,      'return shape of {}')
+    
+    g = GraphQDMR()
+    
+    vid_v1 = g.add_vertex(v1)
+    vid_v2 = g.add_vertex(v2)
+    vid_v3 = g.add_vertex(v3)
+    
+    g.add_edge(vid_v1, vid_v2)
+    g.add_edge(vid_v2, vid_v3)
+    
+    VisualizerQDMR.visualize(g)
+    
+    return g
+
+def example_graph_0_2():
+    v1 = VertexQDMR(OperationQDMR.SELECT,       'return object')
+    v2 = VertexQDMR(OperationQDMR.PROJECT,      'return {} that is partially hidden by a ball')
+    v3 = VertexQDMR(OperationQDMR.PROJECT,      'return shape of {}')
+    
+    g = GraphQDMR()
+    
+    vid_v1 = g.add_vertex(v1)
+    vid_v2 = g.add_vertex(v2)
+    vid_v3 = g.add_vertex(v3)
+    
+    g.add_edge(vid_v1, vid_v2)
+    g.add_edge(vid_v2, vid_v3)
+    
+    VisualizerQDMR.visualize(g)
+    
+    return g
+
+def example_graph_1_1():
+    v1 = VertexQDMR(OperationQDMR.SELECT,       'return ball')
+    v2 = VertexQDMR(OperationQDMR.SELECT,       'return object')
+    v3 = VertexQDMR(OperationQDMR.PROJECT,      'return {} that is partially hidden by {}')
+    v4 = VertexQDMR(OperationQDMR.PROJECT,      'return shape of {}')
+    
+    g = GraphQDMR()
+    
+    vid_v1 = g.add_vertex(v1)
+    vid_v2 = g.add_vertex(v2)
+    vid_v3 = g.add_vertex(v3)
+    vid_v4 = g.add_vertex(v4)
+    
+    g.add_edge(vid_v2, vid_v3)
+    g.add_edge(vid_v1, vid_v3)
+    g.add_edge(vid_v3, vid_v4)
+    
+    print(g)
+    VisualizerQDMR.visualize(g)
+    
+    return g
+
+def example_graph_1_2():
+    v1 = VertexQDMR(OperationQDMR.SELECT,       'return object')
+    v2 = VertexQDMR(OperationQDMR.SELECT,       'return ball')
+    v3 = VertexQDMR(OperationQDMR.PROJECT,      'return {} that is partially hidden by {}')
+    v4 = VertexQDMR(OperationQDMR.PROJECT,      'return shape of {}')
+    
+    g = GraphQDMR()
+    
+    vid_v1 = g.add_vertex(v1)
+    vid_v2 = g.add_vertex(v2)
+    vid_v3 = g.add_vertex(v3)
+    vid_v4 = g.add_vertex(v4)
+    
+    g.add_edge(vid_v1, vid_v3)
+    g.add_edge(vid_v2, vid_v3)
+    g.add_edge(vid_v3, vid_v4)
+    
+    print(g)
+    VisualizerQDMR.visualize(g)
+    
+    return g
+
 def example_graph_1():
     v1 = VertexQDMR(OperationQDMR.SELECT,       'return papers')
     v2 = VertexQDMR(OperationQDMR.FILTER,       'return {} in ACL')
@@ -54,6 +134,8 @@ def convert_graph_1():
     return graph
     
 if '__main__' == __name__:
+    example_graph_1_1()
+    example_graph_1_2()
     """
     # graphs = GoldReader.read_file_qdmr_graphs("filtered_interesting.csv")
     graphs = GoldReader.read_file_qdmr_graphs(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
