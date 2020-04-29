@@ -224,18 +224,18 @@ class GraphPath(Filter):
 
 
 class GraphHasNodeWithIncomingEdges(Filter):
-    """ return true if Graph has vertice with operator 'self.operator', that has incoming edges 'self.incomings'
-    e.g: creating the filter with parameters "operator=op.COMPARATIVE, incomings=[op.AGGREGATE, op.FILTER]"
+    """ return true if Graph has vertice with operator 'self.operator', that has all incoming edges 'self.incomings'
+    e.g: creating the filter with parameters "operator=op.COMPARATIVE, incomings=[op.FILTER, op.FILTER]"
     and then applying it on the graph below:
     AGGREGATE----
                 |
                 V
-    PROJECT---> COMPARATIVE
+    FILTER ----> COMPARATIVE                         FILTER---> COMPARATIVE
                 ^
                 |
     FILTER------
 
-    will return True
+    will return True                                will return False
     """
     def __init__(self, operator, incomings, min_len=None, max_len=None):
         super(GraphHasNodeWithIncomingEdges, self).__init__(min_len, max_len)
