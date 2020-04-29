@@ -1,5 +1,6 @@
 import csv
-from abc import abstractmethod, ABC
+import os
+
 from GraphQDMR import OperationQDMR as op
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR
 from ReaderQDMR import GoldReader
@@ -8,13 +9,13 @@ from ReaderQDMR import GoldReader
 # csv operations   #
 ####################
 
-"""
+
 def get_file_location_at_parent_folder(file_name):
     dirname = os.path.dirname(__file__)
     par_dir = os.path.abspath(os.path.join(dirname, os.pardir))
     input_csv_file = os.path.join(par_dir, file_name)
     return input_csv_file
-"""
+
 
 
 def save_csv_file(rows, output_csv_file):
@@ -31,15 +32,32 @@ def save_csv_file(rows, output_csv_file):
 """filter QDMR queries according to their OPERATORS list"""
 
 
-class Filter(ABC):
-    @abstractmethod
+class Filter:
+    """basic filter, that save min&max graph len"""
+    def __init__(self, min_len=None, max_len=None):
+        if min_len is None:
+            self.min_len = 0
+        else:
+            self.min_len = min_len
+
+        if max_len is None:
+            self.max_len = 20
+        else:
+            self.max_len = max_len
+
+    def has_good_len(self, graph_len):
+        if self.min_len <= graph_len <= self.max_len:
+            return True
+        return False
+
     def filter(self):
         raise NotImplementedError
 
 
 class ChainFilter(Filter):
 
-    def __init__(self, operator: op):
+    def __init__(self, operator: op, min_len=None, max_len=None):
+        super(ChainFilter, self).__init__(min_len, max_len)
         self.operator = str(operator).lower()
         self.name = "chain_of_" + str(operator)
 
@@ -77,23 +95,29 @@ class ChainFilter(Filter):
 
     def filter(self, decomposition, operators):
         """returns true if there is a chain of operator self.operator """
+        if not self.has_good_len(len(operators)):
+            return False
         return ChainFilter.detect_chain(operators, self.operator)
 
 
 class PermutationFilter(Filter):
-    def __init__(self, operators):
+    def __init__(self, operators, min_len=None, max_len=None):
+        super(PermutationFilter, self).__init__(min_len, max_len)
         self.operator_sublist = [str(operator).lower() for operator in operators]
         self.name = "sublist_of_" + '_'.join(self.operator_sublist)
 
     def filter(self, decomposition, operators):
         """returns true if self.operators_sublist (or a permutation of it) is a sublist of operators"""
-
         def all_zeros(d):
             """iterate on a dict, and return True <=> all the keys have value=0"""
             for key in d.keys():
                 if d[key] != 0:
                     return False
             return True
+
+        if not self.has_good_len(len(operators)):
+            return False
+
 
         list_len = len(operators)
         sublist_len = len(self.operator_sublist)
@@ -131,7 +155,7 @@ class PermutationFilter(Filter):
 
 
 class Interesting(Filter):
-    """find interesting graphs - long graphs with interesting operations"""
+    """find graphs with interesting operations"""
     boring_operations = [str(op.SELECT).lower(), str(op.FILTER).lower(), str(op.PROJECT).lower(),
                          str(op.AGGREGATE).lower()]
 
@@ -141,16 +165,16 @@ class Interesting(Filter):
                               str(op.SORT).lower(), str(op.BOOLEAN).lower(), str(op.ARITHMETIC).lower(),
                               ]
 
-    def __init__(self):
+    def __init__(self, min_len=None, max_len=None):
+        super(Interesting, self).__init__(min_len, max_len)
         self.name = "interesting"
-        self.max_len = 8
-        self.min_len = 4
         self.min_interesting_operations = 3
 
     def filter(self, decomposition, operators):
         """returns true if graph is a 2 head snake """
-        if len(operators) <= self.min_len or len(operators) > self.max_len:
+        if not self.has_good_len(len(operators)):
             return False
+
         interesting = 0
         for operator in operators:
             if operator in Interesting.interesting_operations:
@@ -171,30 +195,35 @@ class GraphPath(Filter):
     """ return true if Graph has path [operators[0]...operators[n-1]]
     e.g: for input operators=["select","filter"], the graph: [select-->select-->filter] is legit(where --> is an edge)"""
 
-    def __init__(self, operators):
+    def __init__(self, operators, min_len=None, max_len=None):
+        super(GraphPath, self).__init__(min_len, max_len)
         self.operator_sublist = operators
         self.name = "sublist_of_" + '_'.join([str(operator).lower() for operator in operators])
 
     def filter(self, graph):
-        graph_opers = graph.get_operations()
-        if graph_opers != [op.SELECT, op.SELECT, op.FILTER, op.FILTER]:
+        def filter_rec(vertice, operator_sublist):
+            if vertice.operation != operator_sublist[0]:  # bad operation
+                return False
+
+            if len(operator_sublist) == 1:
+                return True
+
+            for neighbore in vertice.outgoing:
+                if filter_rec(neighbore, operator_sublist[1:]):
+                    return True
             return False
+
+        if not self.has_good_len(len(graph.vertices)):
+            return False
+
         vertices = graph.vertices
-        chains = []
         for vertice_id, vertice in vertices.items():
-            current = [vertice]
-            for i, target_operator in enumerate(self.operator_sublist):
-                found = False
-                for c in current:
-                    if c.operation == target_operator:
-                        found = True
-                        break
-                if not found:
-                    break
-                current = vertice.outgoing
-            if i == len(self.operator_sublist) - 1:
-                chains.append(vertice_id)
-        return len(chains) > 0
+            if filter_rec(vertice, self.operator_sublist):
+                return True
+        return False
+
+
+
 
 
 ####################
@@ -206,13 +235,15 @@ class FilterData:
 
     @staticmethod
     def filter_data_according_to_operatorlist(filter, output_csv_file="",
-                                              input_csv_file=GoldReader.TRAIN_QUESTIONS_FILE_NAME):
+                                              input_csv_file=None):
         """ use this function to active  'graph filter'
         :param filter: a class with "filter" function to apply on questions.
         returns True if question is good(we want to save it), else False
         :param output_csv_file: a path save the result csv file
         :param input_csv_file: a path to the input csv file
         """
+        if input_csv_file is None:
+            input_csv_file = get_file_location_at_parent_folder(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
         rows = GoldReader.read_file_rows(input_csv_file)
         q = rows[0]
         INDEX_QUESTION = q.index("question_text")
@@ -237,17 +268,20 @@ class FilterData:
         save_csv_file(filtered_rows, output_csv_file=output_csv_file)
 
     @staticmethod
-    def filter_data_according_to_graph(filter, output_csv_file="", input_csv_file=GoldReader.TRAIN_QUESTIONS_FILE_NAME):
+    def filter_data_according_to_graph(filter, output_csv_file="", input_csv_file=None):
         """ use this function to active  'operatorList filter'
         :param filter: a class with "filter" function to apply on questions.
         returns True if question is good(we want to save it), else False
         :param output_csv_file: a path save the result csv file
         :param input_csv_file: a path to the input csv file
         """
+        if input_csv_file is None:
+            input_csv_file = get_file_location_at_parent_folder(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
         rows = GoldReader.read_file_rows(input_csv_file)
         graphs = GoldReader.read_file_qdmr_graphs(input_csv_file)
         q = rows[0]
         filtered_rows = [q]
+        print("start filtering")
         for r, graph in zip(rows[1:], graphs):
             if filter.filter(graph):
                 filtered_rows.append(r)  # save the question
