@@ -61,8 +61,11 @@ class GraphQDMR:
         return True
 
     def vertices_gen(self):
-        for v in self.vertices:
+        for v in self.vertices.values():
             yield v
+
+    def remove_vertex(self, vertex_qdmr):
+        self.vertices = {key: val for key, val in self.vertices.items() if val != vertex_qdmr}
 
     def adj_list_str(self):
         graph_str = ''
@@ -78,4 +81,6 @@ class GraphQDMR:
         for v in self.vertices.values():
             graph_str += f'{v}\n'
         return graph_str
+
+
     
