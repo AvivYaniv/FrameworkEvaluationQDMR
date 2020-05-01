@@ -1,13 +1,13 @@
 from .OperationQDMR import OperationQDMR
 
 class VertexQDMR:
-    _operation  =   OperationQDMR.NONE
-    
-    def __init__(self, operation, step_desc=None):
-        self.step_desc  =   [step_desc] if step_desc else [''] # list, to allow multi-operation vertices
+    def __init__(self, operation: OperationQDMR, step_desc=None):
+        self.step_desc  =   [step_desc] if step_desc else ['']  # list, to allow multi-operation vertices
         self.operation  =   operation
         self.incoming   =   []
         self.outgoing   =   []
+
+        self.vid = -1  # Would be updated after adding to the graph
 
     def set_incoming(self, incoming):
         self.incoming   = incoming

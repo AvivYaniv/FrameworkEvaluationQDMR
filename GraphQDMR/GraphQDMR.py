@@ -1,4 +1,8 @@
 import uuid
+from typing import Iterator
+
+from GraphQDMR import VertexQDMR
+
 
 class GraphQDMR:
     def __init__(self):
@@ -18,7 +22,7 @@ class GraphQDMR:
             operations_histogram[v.operation] += 1
         return operations_histogram
         
-    def add_vertex(self, v):
+    def add_vertex(self, v: VertexQDMR):
         v.vid                   = 1 + len(self.vertices.keys()) # uuid.uuid4()
         self.vertices[v.vid]    = v
         return v.vid
@@ -60,11 +64,11 @@ class GraphQDMR:
         v_2.operation   = temp_operation
         return True
 
-    def vertices_gen(self):
+    def vertices_gen(self) -> Iterator[VertexQDMR]:
         for v in self.vertices.values():
             yield v
 
-    def remove_vertex(self, vertex_qdmr):
+    def remove_vertex(self, vertex_qdmr: VertexQDMR):
         self.vertices = {key: val for key, val in self.vertices.items() if val != vertex_qdmr}
 
     def adj_list_str(self):
