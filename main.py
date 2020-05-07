@@ -1,5 +1,6 @@
 
 from GraphQDMR import *
+from GraphQDMR.UnifyGraphQDMR.SemanticPreservativeStructureAction import *
 from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.NormalStringReprGraphMatcherQDMR import *
 from VisualizerQDMR import *
 from ParserQDMR import *
@@ -144,8 +145,37 @@ def convert_graph_1():
     graph           = GoldParserQDMR.parse(decomposition, operators_list)
     print(graph)
     return graph
-    
+
+def check_percentage_of_structure_actions(graphs):
+    total_graphs = 0
+    filter_chain_n = 0
+    project_chain_n = 0
+    excpetions_graphs = 0
+
+    for g in graphs:
+        total_graphs += 1
+        try:
+            # print(NormalStringReprBuilderQDMR(g, multiline=False).build())
+            if UnifyFilterChains.apply(g):
+                filter_chain_n += 1
+                # print("\n------------------------", NormalStringReprBuilderQDMR(g, multiline=False).build())
+            if UnifyProjectChains.apply(g):
+                project_chain_n += 1
+
+        except Exception as e:
+            if not str(e).startswith("Logical Error"):
+                print("\n***********************************\n", "\t\t", e, "\n***********************************\n")
+            excpetions_graphs += 1
+
+    print("Total: ", total_graphs)
+    print("Filter Chain: ", filter_chain_n)
+    print("Filter Chain percentage: ", filter_chain_n / total_graphs)
+    print("Project Chain: ", project_chain_n)
+    print("Project Chain percentage: ", project_chain_n / total_graphs)
+    print("Exeption graphs: ", excpetions_graphs)
+
 if '__main__' == __name__:
+    '''
     g1 = example_graph_1_1()
     g2 = example_graph_1_2()
 
@@ -159,11 +189,11 @@ if '__main__' == __name__:
     print()
 
     example_graph_1()
-
-    """
-    # graphs = GoldReader.read_file_qdmr_graphs("filtered_interesting.csv")
-    graphs = GoldReader.read_file_qdmr_graphs(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
-    for g in graphs:
-        VisualizerQDMR.visualize(g)
-    """
+'''
     
+    graphs = GoldReader.read_file_qdmr_graphs("train.csv")
+
+    check_percentage_of_structure_actions(graphs)
+    #graphs = GoldReader.read_file_qdmr_graphs(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
+    #for g in graphs:
+    #    VisualizerQDMR.visualize(g)
