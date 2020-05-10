@@ -71,6 +71,16 @@ class GraphQDMR:
     def remove_vertex(self, vertex_qdmr: VertexQDMR):
         self.vertices = {key: val for key, val in self.vertices.items() if val != vertex_qdmr}
 
+    def get_operators_set(self):
+        set = {}
+        for v in self.vertices_gen():
+            if v.operation in set:
+                set[v.operation] += 1
+            else:
+                set[v.operation] = 1
+        return set
+
+
     def adj_list_str(self):
         graph_str = ''
         for v_id, v in self.vertices.items():
@@ -79,7 +89,7 @@ class GraphQDMR:
                 graph_str += f' -> {n.vid}'                
             graph_str += '\n'
         return graph_str
-    
+
     def __str__(self):
         graph_str = ''
         for v in self.vertices.values():
