@@ -4,6 +4,7 @@ from GraphQDMR.UnifyGraphQDMR import UnifyGraphQDMR
 
 class EvaluatorQDMR:
 
+    # TODO : Move to 'GraphMatcherQDMR' package
     @staticmethod
     def get_operation_match_score(prediction_graph_qdmr, gold_graph_qdmr):
         prediction_graph_set = prediction_graph_qdmr.get_operators_set()

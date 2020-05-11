@@ -2,6 +2,7 @@ import uuid
 from typing import Iterator
 
 from GraphQDMR import VertexQDMR
+from scipy.cluster._hierarchy import leaders
 
 
 class GraphQDMR:
@@ -36,6 +37,13 @@ class GraphQDMR:
         v_in.add_outgoining(v_out)
         v_out.add_incoming(v_in)
         return True
+    
+    def get_leafs(self):
+        leafs = []
+        for v in self.vertices_gen():
+            if 0 == len(v.incoming):
+                leafs.append(v)
+        return leafs
     
     # Invariant : same number of incoming edges
     def swap_vertices_same_operators(self, vid_1, vid_2):

@@ -5,6 +5,7 @@ from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.NormalStringReprGraphMatcherQDMR i
 from VisualizerQDMR import *
 from ParserQDMR import *
 from ReaderQDMR.GoldReader import GoldReader
+from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.PropotionalGraphMatcherQDMR import PropotionalGraphMatcherQDMR
 
 def example_graph_0_1():
     v1 = VertexQDMR(OperationQDMR.SELECT,       'return ball')
@@ -174,7 +175,67 @@ def check_percentage_of_structure_actions(graphs):
     print("Project Chain percentage: ", project_chain_n / total_graphs)
     print("Exeption graphs: ", excpetions_graphs)
 
+
+def example_graph_m_1():
+    v1 = VertexQDMR(OperationQDMR.SELECT,       'return papers')
+    v2 = VertexQDMR(OperationQDMR.FILTER,       'return {} in ACL')
+    v3 = VertexQDMR(OperationQDMR.PROJECT,      'return keywords of {}')
+    v4 = VertexQDMR(OperationQDMR.GROUP,        'return number of {} for each {}')
+    v5 = VertexQDMR(OperationQDMR.COMPARATIVE,  'return {} where {} is more than 100')
+    
+    g = GraphQDMR()
+    
+    vid_v1 = g.add_vertex(v1)
+    vid_v2 = g.add_vertex(v2)
+    vid_v3 = g.add_vertex(v3)
+    vid_v4 = g.add_vertex(v4)
+    vid_v5 = g.add_vertex(v5)
+    
+    g.add_edge(vid_v1, vid_v2)
+    g.add_edge(vid_v2, vid_v3)
+    g.add_edge(vid_v2, vid_v4)
+    g.add_edge(vid_v3, vid_v4)
+    g.add_edge(vid_v3, vid_v5)
+    g.add_edge(vid_v4, vid_v5)
+    
+    #VisualizerQDMR.visualize(g)
+    
+    return g
+
+def example_graph_m_2():
+    v1 = VertexQDMR(OperationQDMR.SELECT,       'return papers')
+    v2 = VertexQDMR(OperationQDMR.FILTER,       'return {} in ACL')
+    v3 = VertexQDMR(OperationQDMR.PROJECT,      'return keywords of {}')
+    v4 = VertexQDMR(OperationQDMR.GROUP,        'return numbeddr of {} for each {}')
+    v5 = VertexQDMR(OperationQDMR.COMPARATIVE,  'return {} where {} is more than 100')
+    
+    g = GraphQDMR()
+    
+    vid_v1 = g.add_vertex(v1)
+    vid_v2 = g.add_vertex(v2)
+    vid_v3 = g.add_vertex(v3)
+    vid_v4 = g.add_vertex(v4)
+    vid_v5 = g.add_vertex(v5)
+    
+    g.add_edge(vid_v1, vid_v2)
+    g.add_edge(vid_v2, vid_v3)
+    g.add_edge(vid_v2, vid_v4)
+    g.add_edge(vid_v3, vid_v4)
+    g.add_edge(vid_v3, vid_v5)
+    g.add_edge(vid_v4, vid_v5)
+    
+    VisualizerQDMR.visualize(g)
+    
+    return g
+
 if '__main__' == __name__:
+    g1 = example_graph_m_1()
+    g2 = example_graph_m_2()
+    
+    matcher = PropotionalGraphMatcherQDMR()
+    print(matcher.check(g1, g2))
+    
+    
     '''
     g1 = example_graph_1_1()
     g2 = example_graph_1_2()
@@ -189,11 +250,13 @@ if '__main__' == __name__:
     print()
 
     example_graph_1()
-'''
+    '''
     
+    '''
     graphs = GoldReader.read_file_qdmr_graphs("train.csv")
 
     check_percentage_of_structure_actions(graphs)
     #graphs = GoldReader.read_file_qdmr_graphs(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
-    #for g in graphs:
+    #for g in graphs:    
     #    VisualizerQDMR.visualize(g)
+    '''
