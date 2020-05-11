@@ -1,4 +1,5 @@
 
+# TODO : TaBaLiZe!
 class PropotionalGraphMatcherQDMR:
     
     @staticmethod
@@ -10,8 +11,7 @@ class PropotionalGraphMatcherQDMR:
     def match_vertices_lists(self, prediction_leafs, gold_leafs, with_child=False):
         matched_leafs = []
         for lPrediction in prediction_leafs:
-            for lGoldIndex in reversed(range(len(gold_leafs))):
-                lGold = gold_leafs[lGoldIndex]
+            for lGold in gold_leafs:                
                 if lPrediction.vid in self.sMatched:
                     continue 
                 if not PropotionalGraphMatcherQDMR.match_vertices(lPrediction, lGold):
