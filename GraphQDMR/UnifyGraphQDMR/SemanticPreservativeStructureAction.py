@@ -12,9 +12,10 @@ class SemanticPreservativeStructureAction:
 class UnifyFilterChains(SemanticPreservativeStructureAction):
 
     @staticmethod
-    def dfsUtil(graph_qdmr : GraphQDMR, visited_dict : dict, vertex_qdmr : VertexQDMR):
+    def dfsUtil(graph_qdmr : GraphQDMR, visited_dict : dict, vertex_qdmr : VertexQDMR) -> bool:
+        found = False
         if vertex_qdmr in visited_dict:
-            return
+            return False
         else:
             visited_dict[vertex_qdmr] = True
             if vertex_qdmr.operation == OperationQDMR.FILTER and vertex_qdmr.outgoing.__len__() == 1:
@@ -24,15 +25,20 @@ class UnifyFilterChains(SemanticPreservativeStructureAction):
                     child_vertex.step_desc.extend(vertex_qdmr.step_desc)
                     graph_qdmr.remove_vertex(vertex_qdmr)
                     UnifyFilterChains.dfsUtil(graph_qdmr, visited_dict, child_vertex)
-            else:
-                for adjacent_vertex in vertex_qdmr.outgoing_gen():
-                    UnifyFilterChains.dfsUtil(graph_qdmr, visited_dict, adjacent_vertex)
+                    return True
+
+            for adjacent_vertex in vertex_qdmr.outgoing_gen():
+                found |= UnifyFilterChains.dfsUtil(graph_qdmr, visited_dict, adjacent_vertex)
+            return found
 
     @staticmethod
     def apply(graph_qdmr : GraphQDMR):
+        found = False
         visited_dict = {}
         for vertex_qdmr in graph_qdmr.vertices_gen():
-            UnifyFilterChains.dfsUtil(graph_qdmr, visited_dict, vertex_qdmr)
+            found |= UnifyFilterChains.dfsUtil(graph_qdmr, visited_dict, vertex_qdmr)
+        return found
+
 
 
 '''
@@ -43,7 +49,7 @@ def test(decomposition, operators):
     print(g)
     VisualizerQDMR.visualize(g)
 
-    UnifyFilterChains.apply(g)
+    print(UnifyFilterChains.apply(g))
 
     print(g)
     VisualizerQDMR.visualize(g)

@@ -35,6 +35,9 @@ class VertexQDMR:
     def get_key_for_lexicographic_comparator(vertex):
         return vertex.step_desc[0]
 
+    def __repr__(self):
+        return self.__str__()
+
     def __str__(self):
         v_str           = f'{self.vid} : {self.operation} {self.step_desc}'
         incoming_vids   = [ v.vid for v in self.incoming_gen() ]

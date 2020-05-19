@@ -2,6 +2,7 @@ import uuid
 from typing import Iterator
 
 from GraphQDMR import VertexQDMR
+from scipy.cluster._hierarchy import leaders
 
 
 class GraphQDMR:
@@ -37,6 +38,13 @@ class GraphQDMR:
         v_out.add_incoming(v_in)
         return True
     
+    def get_leafs(self):
+        leafs = []
+        for v in self.vertices_gen():
+            if 0 == len(v.incoming):
+                leafs.append(v)
+        return leafs
+    
     # Invariant : same number of incoming edges
     def swap_vertices_same_operators(self, vid_1, vid_2):
         v_1         =   self.vertices.get(vid_1,    None)
@@ -71,6 +79,16 @@ class GraphQDMR:
     def remove_vertex(self, vertex_qdmr: VertexQDMR):
         self.vertices = {key: val for key, val in self.vertices.items() if val != vertex_qdmr}
 
+    def get_operators_set(self):
+        set = {}
+        for v in self.vertices_gen():
+            if v.operation in set:
+                set[v.operation] += 1
+            else:
+                set[v.operation] = 1
+        return set
+
+
     def adj_list_str(self):
         graph_str = ''
         for v_id, v in self.vertices.items():
@@ -79,7 +97,7 @@ class GraphQDMR:
                 graph_str += f' -> {n.vid}'                
             graph_str += '\n'
         return graph_str
-    
+
     def __str__(self):
         graph_str = ''
         for v in self.vertices.values():
