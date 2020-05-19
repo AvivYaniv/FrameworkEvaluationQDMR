@@ -349,8 +349,8 @@ if '__main__' == __name__:
     # interesting = Interesting()
     # FilterData.filter_data_according_to_operatorlist(filter=interesting)
 
-    with_desiered_incoming_edges = GraphHasNodeWithIncomingEdges(operator=op.COMPARATIVE, incomings=[op.AGGREGATE, op.FILTER])
-    FilterData.filter_data_according_to_graph(filter=with_desiered_incoming_edges, output_csv_file="ron.csv")
+    #with_desiered_incoming_edges = GraphHasNodeWithIncomingEdges(operator=op.COMPARATIVE, incomings=[op.AGGREGATE, op.FILTER])
+    #FilterData.filter_data_according_to_graph(filter=with_desiered_incoming_edges, output_csv_file="ron.csv")
 
-    # graph_path = GraphPath([op.SELECT], min_len=10)
-    # FilterData.filter_data_according_to_graph(filter=graph_path, output_csv_file="ron.csv")
+    graph_path = GraphPath([op.UNION, op.AGGREGATE])
+    FilterData.filter_data_according_to_graph(filter=graph_path, output_csv_file="ron_un_agg.csv")

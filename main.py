@@ -1,6 +1,5 @@
 
 from GraphQDMR import *
-from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.NormalStringReprGraphMatcherQDMR import *
 from VisualizerQDMR import *
 from ParserQDMR import *
 from ReaderQDMR.GoldReader import GoldReader
@@ -59,10 +58,6 @@ def example_graph_1_1():
     g.add_edge(vid_v3, vid_v4)
     
     print(g)
-    print("Multiline Normal String Representation:")
-    print(NormalStringReprBuilderQDMR(g, multiline=True).build())
-    print()
-
     VisualizerQDMR.visualize(g)
     
     return g
@@ -85,10 +80,6 @@ def example_graph_1_2():
     g.add_edge(vid_v3, vid_v4)
     
     print(g)
-    print("NOT Multiline Normal String Representation:")
-    print(NormalStringReprBuilderQDMR(g, multiline=False).build())
-    print()
-
     VisualizerQDMR.visualize(g)
     
     return g
@@ -116,9 +107,6 @@ def example_graph_1():
     g.add_edge(vid_v4, vid_v5)
     
     print(g)
-    print("Multiline Normal String Representation:")
-    print(NormalStringReprBuilderQDMR(g, multiline=True).build())
-    print()
     
     return g
     
@@ -146,24 +134,12 @@ def convert_graph_1():
     return graph
     
 if '__main__' == __name__:
-    g1 = example_graph_1_1()
-    g2 = example_graph_1_2()
+    # example_graph_1_1()
+    # example_graph_1_2()
 
-    if NormalStringGraphMatcherQDMR.check(g1, g2):
-        print("*** Graphs 1.1 and 1.2 match :) ***")
-    else:
-        raise Exception("Graphs 1.1 and 1.2 don't match")
-
-    print()
-    print()
-    print()
-
-    example_graph_1()
-
-    """
-    # graphs = GoldReader.read_file_qdmr_graphs("filtered_interesting.csv")
-    graphs = GoldReader.read_file_qdmr_graphs(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
+    graphs = GoldReader.read_file_qdmr_graphs("ron_un_agg.csv")
+    #graphs = GoldReader.read_file_qdmr_graphs(GoldReader.TRAIN_QUESTIONS_FILE_NAME)
     for g in graphs:
         VisualizerQDMR.visualize(g)
-    """
+
     
