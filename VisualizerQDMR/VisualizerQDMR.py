@@ -30,3 +30,4 @@ class VisualizerQDMR:
         plt.xlim(x_min - x_margin, x_max + x_margin)
         plt.get_current_fig_manager().window.state('zoomed')
         plt.show()
+        return nx_graph
