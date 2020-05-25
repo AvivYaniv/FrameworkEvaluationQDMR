@@ -29,11 +29,36 @@ class VertexQDMR:
         for v in self.outgoing:
             yield v
 
+    def merge_step_desc(self, new_step_desc):
+        self.step_desc.extend(new_step_desc)
+        self.step_desc.sort()
+
     # TODO : Add comparator to sort INcoming vertices list to unify form
     # i.e. Lexicographic comparator
     @staticmethod
     def get_key_for_lexicographic_comparator(vertex):
         return vertex.step_desc[0]
+
+    @staticmethod
+    def compare(v1, v2):
+        if v1.step_desc[0] < v2.step_desc[0]:
+            return -1
+        if v1.step_desc[0] > v2.step_desc[0]:
+            return 1
+        else:
+            len_incoming1 = len(v1.incoming)
+            len_incoming2 = len(v2.incoming)
+            if len_incoming1 != len_incoming2:
+                return len_incoming1 - len_incoming2
+            else:
+                if len_incoming1 == 0 and len_incoming2 == 0:
+                    return 0
+                else:
+                    incoming_copy1 = list(v1.incoming)
+                    incoming_copy2 = list(v2.incoming)
+                    incoming_copy1.sort(key = VertexQDMR.get_key_for_lexicographic_comparator)
+                    incoming_copy2.sort(key = VertexQDMR.get_key_for_lexicographic_comparator)
+                    return VertexQDMR.compare(incoming_copy1[0], incoming_copy2[0])
 
     def __repr__(self):
         return self.__str__()
