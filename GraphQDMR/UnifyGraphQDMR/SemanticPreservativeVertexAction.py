@@ -28,8 +28,7 @@ class SemanticPreservativeVertexAction:
 class SortVertexAttributes(SemanticPreservativeVertexAction):
     @staticmethod
     def check_to_apply(vertex_qdmr):
-        op = vertex_qdmr.operation
-        return op == OperationQDMR.UNION or op == OperationQDMR.INTERSECTION or op == OperationQDMR.BOOLEAN
+        return vertex_qdmr.operation in [ OperationQDMR.UNION, OperationQDMR.INTERSECTION, OperationQDMR.BOOLEAN]
 
     @staticmethod
     def apply_on_vertex(vertex_qdmr):
