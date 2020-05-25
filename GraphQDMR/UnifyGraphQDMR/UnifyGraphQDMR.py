@@ -1,4 +1,4 @@
-
+from .. import OperationQDMR as op
 
 class UnifyGraphQDMR:
     HOOK_NAME_AFTER_VERTICES_ACTIONS    = 'after_vertices_actions_hook'
@@ -13,6 +13,15 @@ class UnifyGraphQDMR:
     def invoke_hook(self, hook_name):
         if self.hooks.get(hook_name):
             self.hooks[hook_name]()
+
+    @ staticmethod
+    def is_vertice_commotative_action(operation):
+        # TODO test this
+        if (operation.name == op.UNION.name or
+           operation.name == op.COMPARISON.name or
+           operation.name == op.INTERSECTION.name):
+            return True
+        return False
 
     def convert(self, graph_qdmr):
         # TODO : Check if graph is a LIST therefore no vertex action is possible (commutative action requires more than one argument)
