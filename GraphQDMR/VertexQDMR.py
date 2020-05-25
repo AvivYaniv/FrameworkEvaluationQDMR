@@ -38,6 +38,20 @@ class VertexQDMR:
     def __repr__(self):
         return self.__str__()
 
+    def decomposition_for_train(self):
+        """ vertice representation for train_data_converter.py"""
+        v_str           = f'{self.step_desc}'
+        incoming_vids   = [ v.vid for v in self.incoming_gen() ]
+
+        if len(self.step_desc) > 1:
+            incoming_vids = incoming_vids * len(self.step_desc)
+
+        if incoming_vids:
+            incoming_vids = [f'#{vid}' for vid in incoming_vids]
+            v_str = v_str.format(*incoming_vids)
+        return v_str.replace("[", "").replace("]", "").replace("'", "")
+
+
     def __str__(self):
         v_str           = f'{self.vid} : {self.operation} {self.step_desc}'
         incoming_vids   = [ v.vid for v in self.incoming_gen() ]

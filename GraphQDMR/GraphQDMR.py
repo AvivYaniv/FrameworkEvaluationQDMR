@@ -104,5 +104,16 @@ class GraphQDMR:
             graph_str += f'{v}\n'
         return graph_str
 
+    def decomposition_for_train(self):
+        """ vertice representation for train_data_converter.py"""
+        return ';'.join([v.decomposition_for_train() for v in self.vertices.values()])
+
+    def operators_for_train(self):
+        """ vertice representation for train_data_converter.py"""
+        operators = self.get_operations()
+        return [o.name.lower() for o in operators]
+
+
+
 
     
