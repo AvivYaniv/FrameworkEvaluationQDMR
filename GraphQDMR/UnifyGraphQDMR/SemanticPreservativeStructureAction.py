@@ -22,7 +22,7 @@ class UnifyFilterChains(SemanticPreservativeStructureAction):
                 child_vertex = vertex_qdmr.outgoing[0]
                 if child_vertex.operation == OperationQDMR.FILTER: # found chain
                     child_vertex.set_incoming(vertex_qdmr.incoming)
-                    child_vertex.step_desc.extend(vertex_qdmr.step_desc)
+                    child_vertex.merge_step_desc(vertex_qdmr.step_desc)
                     graph_qdmr.remove_vertex(vertex_qdmr)
                     UnifyFilterChains.dfsUtil(graph_qdmr, visited_dict, child_vertex)
                     return True
@@ -47,15 +47,16 @@ from ParserQDMR.GoldParserQDMR import GoldParserQDMR #GoldParserQDMR
 def test(decomposition, operators):
     g = GoldParserQDMR.parse(decomposition, operators)
     print(g)
-    VisualizerQDMR.visualize(g)
+    #VisualizerQDMR.visualize(g)
 
     print(UnifyFilterChains.apply(g))
 
     print(g)
-    VisualizerQDMR.visualize(g)
+    #VisualizerQDMR.visualize(g)
 
 
 if __name__ == '__main__':
+
     decomposition = "return flights ;return #1 that  are one way ;return #2 from atlanta ;return #3 to  pittsburgh ;return fares of #4 ;return #5 that  are the  lowest"
     operators = "['select', 'filter', 'filter', 'filter', 'project', 'filter']"
     test(decomposition, operators)
@@ -71,8 +72,6 @@ if __name__ == '__main__':
     decomposition = "return papers ;return #1 by H. V. Jagadish ;return #2 on  PVLDB ;return #3 after 2000 ;return number of  #4"
     operators = "['select', 'filter', 'filter', 'filter', 'aggregate']"
     test(decomposition, operators)
-
-
 
     print('Done')
 '''
