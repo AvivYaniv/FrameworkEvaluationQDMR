@@ -18,9 +18,9 @@ class UnifyFilterChains(SemanticPreservativeStructureAction):
             return False
         else:
             visited_dict[vertex_qdmr] = True
-            if vertex_qdmr.operation == OperationQDMR.FILTER and vertex_qdmr.outgoing.__len__() == 1:
+            if vertex_qdmr.operation == OperationQDMR.FILTER and vertex_qdmr.outgoing.__len__() == 1 and vertex_qdmr.incoming.__len__() == 1: #sanity check
                 child_vertex = vertex_qdmr.outgoing[0]
-                if child_vertex.operation == OperationQDMR.FILTER: # found chain
+                if child_vertex.operation == OperationQDMR.FILTER and child_vertex.incoming.__len__() == 1: # found chain
                     child_vertex.set_incoming(vertex_qdmr.incoming)
                     child_vertex.merge_step_desc(vertex_qdmr.step_desc)
                     graph_qdmr.remove_vertex(vertex_qdmr)
@@ -41,7 +41,7 @@ class UnifyFilterChains(SemanticPreservativeStructureAction):
 
 
 
-'''
+
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR #GoldParserQDMR
 
 def test(decomposition, operators):
@@ -56,7 +56,11 @@ def test(decomposition, operators):
 
 
 if __name__ == '__main__':
+    decomposition = "return cubes ;return #1 that  are purple ;return #1 that  #2 is  to the right of ;return if  #3 is  shiny ;return if  #3 is  matte ;return #4 , #5"
+    operators = "['select', 'filter', 'filter', 'boolean', 'boolean', 'union']"
+    test(decomposition, operators)
 
+'''
     decomposition = "return flights ;return #1 that  are one way ;return #2 from atlanta ;return #3 to  pittsburgh ;return fares of #4 ;return #5 that  are the  lowest"
     operators = "['select', 'filter', 'filter', 'filter', 'project', 'filter']"
     test(decomposition, operators)
@@ -72,6 +76,5 @@ if __name__ == '__main__':
     decomposition = "return papers ;return #1 by H. V. Jagadish ;return #2 on  PVLDB ;return #3 after 2000 ;return number of  #4"
     operators = "['select', 'filter', 'filter', 'filter', 'aggregate']"
     test(decomposition, operators)
-
-    print('Done')
 '''
+
