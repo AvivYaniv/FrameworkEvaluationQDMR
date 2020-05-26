@@ -10,7 +10,7 @@ from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.PropotionalGraphMatcherQDMR import
 
 if '__main__' == __name__:
     input_csv_file = "train.csv"
-    output_csv_file = "train_result.csv"
+    output_csv_file = "train_unified.csv"
 
     DECOMPOSITION_INDEX = 2  # index inside the question
     OPERATOR_INDEX = 3  # index inside the question
