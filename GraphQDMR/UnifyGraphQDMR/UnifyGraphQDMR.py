@@ -1,15 +1,15 @@
 from .. import OperationQDMR as op
 
 from .SemanticPreservativeVertexAction import SortVertexAttributes
-from .SemanticPreservativeStructureAction import UnifyFilterChains
+from .SemanticPreservativeStructureAction import UnifyFilterChains, UnifySelectOrder
 
 
 class UnifyGraphQDMR:
     HOOK_NAME_AFTER_VERTICES_ACTIONS    = 'after_vertices_actions_hook'
     HOOK_NAME_AFTER_STRUCTURE_ACTIONS   = 'after_structure_actions_hook'
     
-    VERTICES_ACTIONS    = [ SortVertexAttributes() ]
-    STRUCTURE_ACTIONS   = [ UnifyFilterChains() ]
+    VERTICES_ACTIONS    = [ SortVertexAttributes()]
+    STRUCTURE_ACTIONS   = [ UnifyFilterChains(), UnifySelectOrder()]
 
     def __init__(self, hooks={}):
         self.hooks = hooks

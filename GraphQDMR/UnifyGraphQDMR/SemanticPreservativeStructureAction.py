@@ -1,4 +1,5 @@
 from GraphQDMR import *
+from GraphQDMR.UnifyGraphQDMR.utils import cmp_to_key
 from VisualizerQDMR import VisualizerQDMR
 
 
@@ -39,8 +40,22 @@ class UnifyFilterChains(SemanticPreservativeStructureAction):
             found |= UnifyFilterChains.dfsUtil(graph_qdmr, visited_dict, vertex_qdmr)
         return found
 
+class UnifySelectOrder(SemanticPreservativeStructureAction):
+    """change order of SELECT operators to be lexicographic"""
 
+    @staticmethod
+    def apply(graph_qdmr : GraphQDMR):
+        leafs = graph_qdmr.get_leafs()
+        vertices = leafs
+        ids = [leaf.vid for leaf in leafs]
 
+        # sort
+        vertices.sort(key=cmp_to_key(VertexQDMR.compare))
+        ids = sorted(ids)
+
+        # replace id
+        for id, vertice in zip(ids, vertices):
+            vertice.vid = id
 
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR #GoldParserQDMR
 
