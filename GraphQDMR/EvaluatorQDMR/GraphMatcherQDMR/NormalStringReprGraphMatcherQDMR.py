@@ -1,6 +1,7 @@
 import textwrap
 
 from GraphQDMR import GraphQDMR, VertexQDMR
+from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
 
 
 class NormalStringReprBuilderQDMR:
@@ -11,7 +12,9 @@ class NormalStringReprBuilderQDMR:
         self.multiline = multiline
 
     def _get_root(self) -> VertexQDMR:
-        root = None
+        return self.qdmr.vertices[max(self.qdmr.get_vids())]
+
+        """root = None
 
         for v in self.qdmr.vertices_gen():
             outgoing = list(v.outgoing_gen())
@@ -25,7 +28,7 @@ class NormalStringReprBuilderQDMR:
         if root is None:
             raise Exception("Logical Error: QDMR contains zero roots"
                             " - No vertex in QDMR has 0 outgoing edges")
-        return root
+        return root"""
 
     def indent(self, s):
         if not self.multiline:
@@ -53,6 +56,7 @@ class NormalStringReprBuilderQDMR:
         formatted_descs = []
 
         for desc in v.step_desc:
+            desc = CanonicalizerQDMR.canonicalize(desc, remove_references=True, remove_stopwords=True)  # canonicalize desc
             args = (self._build_arg(u) for u in v.incoming_gen())
             formatted_desc = desc.replace(" {", self.next() + "{").replace("} ", "}" + self.next()) \
                 .format(*args)

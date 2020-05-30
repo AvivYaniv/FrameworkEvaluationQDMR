@@ -49,8 +49,8 @@ class VertexQDMR:
         'the sabich' Vs. 'sabich'
         ...thus non-canonicalized comparision is errounous
         """
-        v1_desc = CanonicalizerQDMR.canonicalize(v1.step_desc)[0]
-        v2_desc = CanonicalizerQDMR.canonicalize(v2.step_desc)[0]
+        v1_desc = CanonicalizerQDMR.canonicalize(v1.step_desc[0])
+        v2_desc = CanonicalizerQDMR.canonicalize(v2.step_desc[0])
         if v1_desc < v2_desc:
             return -1
         if v1_desc > v2_desc:
@@ -95,6 +95,9 @@ class VertexQDMR:
             incoming_vids = incoming_vids * len(self.step_desc)
 
         if incoming_vids:
-            v_str = v_str.format(*incoming_vids)
+            try:
+                v_str = v_str.format(*incoming_vids)
+            except IndexError:
+                v_str = v_str.format(*incoming_vids + [self.vid])
         return v_str
         
