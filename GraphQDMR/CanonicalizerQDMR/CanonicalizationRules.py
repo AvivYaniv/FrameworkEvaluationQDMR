@@ -8,8 +8,12 @@ CANONICALIZATION_RULES =        \
     r'^the'         : '',
     
     # REVISE SECTION
-    r'\. '          : '',
+    r'\. '          : ' ',
     r'\.'           : '',
+    
+    r'^what is '    : '',
+    
+    r'in the'       : '',
     
     r'the '         : '',
     

@@ -23,6 +23,12 @@ class CanonicalizerQDMR:
     @staticmethod
     def resolve_language(language = None):
         return language if language else CanonicalizerQDMR.LANGUAGE
+
+    @staticmethod
+    def normalize_whitespaces(sentence):
+        sentence = sentence.replace('{ }', '{}')
+        sentence = sentence.strip()
+        return re.sub(' +', ' ', sentence)
     
     # Normalization Section
     @staticmethod
@@ -31,6 +37,7 @@ class CanonicalizerQDMR:
         # TODO : REVISE
         # normalized_step_desc    = CanonicalizerQDMR.remove_stop_words(normalized_step_desc)
         normalized_step_desc    = CanonicalizerQDMR.steam(normalized_step_desc)
+        normalized_step_desc    = CanonicalizerQDMR.normalize_whitespaces(normalized_step_desc)
         return normalized_step_desc 
 
     @staticmethod
@@ -53,7 +60,12 @@ class CanonicalizerQDMR:
     # NOTE! Canonicalization includes Normalization     
     @staticmethod
     def canonicalize(step_desc, language = None):
+        print(f'TODO DEBUG REMOVE : Original [{step_desc}]')
         canonicalized_step_desc = CanonicalizerQDMR.normalize(step_desc, language)
+        print(f'TODO DEBUG REMOVE : Normalized [{step_desc}]')
         for pattern_to_replace, replace_token in CANONICALIZATION_RULES.items():
             canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
+        print(f'TODO DEBUG REMOVE : Canonicalized [{step_desc}]')
+        canonicalized_step_desc = CanonicalizerQDMR.normalize_whitespaces(canonicalized_step_desc)
+        print(f'TODO DEBUG REMOVE : Final [{step_desc}]') 
         return canonicalized_step_desc
