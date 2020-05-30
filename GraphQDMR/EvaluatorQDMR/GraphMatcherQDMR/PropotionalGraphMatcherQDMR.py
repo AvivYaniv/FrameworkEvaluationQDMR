@@ -7,7 +7,8 @@ class PropotionalGraphMatcherQDMR:
     @staticmethod
     def match_vertices(lPrediction, lGold):
         return (lPrediction.operation == lGold.operation) and \
-               (CanonicalizerQDMR.canonicalize(lPrediction.step_desc) == CanonicalizerQDMR.canonicalize(lGold.step_desc))
+               all(CanonicalizerQDMR.canonicalize(p_d) == CanonicalizerQDMR.canonicalize(g_d)
+                   for p_d, g_d in zip(lPrediction.step_desc, lGold.step_desc))
     
     def match_vertices_lists(self, prediction_leafs, gold_leafs, with_child=False):
         matched_leafs = []
