@@ -29,10 +29,9 @@ CANONICALIZATION_RULES =        \
     # BOOLEAN Operation Canonicalization Section
 }
 
-
 CANONICALIZATION_KEEPER_RULES = \
 {                               \
-    'if there is'   : KeywordQDMR.EXIST_ANY.name,
-    'is there any'  : KeywordQDMR.EXIST_ANY.name,
+    'if there is'   : KeywordQDMR.EXIST_ANY.get_id(),
+    'is there any'  : KeywordQDMR.EXIST_ANY.get_id(),
 }
 

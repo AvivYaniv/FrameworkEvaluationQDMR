@@ -15,6 +15,13 @@ def compare_canonicalized_tup_list(str_tups, remove_references = None, remove_st
     for (s1, s2) in str_tups:
         assert s1 == s2
 
+def test_canonicalizer_keywords():
+    str_tups    = \
+    [   
+        ( 'is there any {}',                'if there is {}'                ),          
+    ]   
+    compare_canonicalized_tup_list(str_tups)
+
 def test_canonicalizer():
     str_tups    = \
     [   
@@ -41,6 +48,7 @@ def test_canonicalizer_stopwords():
     str_tups    = \
     [   
         ( 'is what {}',                     '{}'                            ),
+        ( 'is there any {}',                'if there is {}'                ),          
     ]   
     compare_canonicalized_tup_list(str_tups, remove_stopwords = True)
     

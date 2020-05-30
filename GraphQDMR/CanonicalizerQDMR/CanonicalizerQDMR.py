@@ -72,7 +72,7 @@ class CanonicalizerQDMR:
             canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
             logging.debug(f'Keyworded [{canonicalized_step_desc}]')
         # Normalize, possibly removing references and stop-words, accordign to flag  
-        canonicalized_step_desc = CanonicalizerQDMR.normalize(step_desc, remove_references, remove_stopwords, language)
+        canonicalized_step_desc = CanonicalizerQDMR.normalize(canonicalized_step_desc, remove_references, remove_stopwords, language)
         logging.debug(f'Normalized [{canonicalized_step_desc}]')
         # Convert to  Canonicalized form, by changing patterns (most important to clean special stop-words when remove_stopwords is false) 
         for pattern_to_replace, replace_token in CANONICALIZATION_RULES.items():
