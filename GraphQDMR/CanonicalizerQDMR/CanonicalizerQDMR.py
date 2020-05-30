@@ -10,6 +10,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
 
+from GraphQDMR.CanonicalizerQDMR.CanonicalizationRules import CANONICALIZATION_KEEPER_RULES
 from GraphQDMR.CanonicalizerQDMR.CanonicalizationRules import CANONICALIZATION_RULES
 
 import logging, sys
@@ -64,12 +65,20 @@ class CanonicalizerQDMR:
     # NOTE! Canonicalization includes Normalization     
     @staticmethod
     def canonicalize(step_desc, remove_references = None, remove_stopwords = None, language = None):
-        logging.debug(f'Original [{step_desc}]') 
+        canonicalized_step_desc = step_desc
+        logging.debug(f'Original [{canonicalized_step_desc}]')
+        # First remove known stop-words, that contain valuable information but contain to their keywords
+        for pattern_to_replace, replace_token in CANONICALIZATION_KEEPER_RULES.items():
+            canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
+            logging.debug(f'Keyworded [{canonicalized_step_desc}]')
+        # Normalize, possibly removing references and stop-words, accordign to flag  
         canonicalized_step_desc = CanonicalizerQDMR.normalize(step_desc, remove_references, remove_stopwords, language)
-        logging.debug(f'Normalized [{step_desc}]')
+        logging.debug(f'Normalized [{canonicalized_step_desc}]')
+        # Convert to  Canonicalized form, by changing patterns (most important to clean special stop-words when remove_stopwords is false) 
         for pattern_to_replace, replace_token in CANONICALIZATION_RULES.items():
             canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
-        logging.debug(f'Canonicalized [{step_desc}]')
+        logging.debug(f'Canonicalized [{canonicalized_step_desc}]')
+        # Removing duplicated white-spaces
         canonicalized_step_desc = CanonicalizerQDMR.normalize_whitespaces(canonicalized_step_desc)
-        logging.debug(f'Final [{step_desc}]') 
+        logging.debug(f'Final [{canonicalized_step_desc}]') 
         return canonicalized_step_desc

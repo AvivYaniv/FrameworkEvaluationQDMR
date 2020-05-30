@@ -1,4 +1,6 @@
 
+from GraphQDMR.CanonicalizerQDMR.KeywordQDMR import KeywordQDMR
+
 # Dictionary of <RegExp pattern to be replaced> : <Str to replace with>
 # ASSUMPTION: All lower-case
 # NOTE: All occurrences will be replaced
@@ -26,3 +28,11 @@ CANONICALIZATION_RULES =        \
     # Operations Canonicalization Section
     # BOOLEAN Operation Canonicalization Section
 }
+
+
+CANONICALIZATION_KEEPER_RULES = \
+{                               \
+    'if there is'   : KeywordQDMR.EXIST_ANY.name,
+    'is there any'  : KeywordQDMR.EXIST_ANY.name,
+}
+

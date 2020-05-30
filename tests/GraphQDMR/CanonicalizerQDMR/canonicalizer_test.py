@@ -40,7 +40,7 @@ def test_canonicalizer_reference_removal():
 def test_canonicalizer_stopwords():
     str_tups    = \
     [   
-        ( 'is what {}',                     '{}'                            ),        
+        ( 'is what {}',                     '{}'                            ),
     ]   
     compare_canonicalized_tup_list(str_tups, remove_stopwords = True)
     
