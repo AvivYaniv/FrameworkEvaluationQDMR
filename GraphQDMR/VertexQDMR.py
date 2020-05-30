@@ -41,6 +41,17 @@ class VertexQDMR:
 
     @staticmethod
     def compare(v1, v2):
+        """
+        Comparision by canonicalized form, to avoid considering stop-words prefixes
+        i.e. Non-canonicalized comparision would fail to determine the following as equal on
+        'the sabich' Vs. 'sabich'
+        ...thus non-canonicalized comparision is errounous
+        """
+        # TODO : @nadavg 
+        # Change to comparision by canonicalized form, with:
+        # Note: Shall remove all stop-words & references (i.e. '{}')
+        # from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
+        # CanonicalizerQDMR.canonicalize(s2) 
         if v1.step_desc[0] < v2.step_desc[0]:
             return -1
         if v1.step_desc[0] > v2.step_desc[0]:
