@@ -8,7 +8,7 @@ def compare_canonicalized_tup_list(str_tups, remove_references = None, remove_st
         [                                                                                              
             (                                                                                          
                 CanonicalizerQDMR.canonicalize(s1, remove_references, remove_stopwords, language),     
-                CanonicalizerQDMR.canonicalize(s2)                                                     
+                CanonicalizerQDMR.canonicalize(s2, remove_references, remove_stopwords, language)                                                     
             )                                                                                          
             for s1, s2 in str_tups
         ]                                                                                              
@@ -42,12 +42,12 @@ def test_canonicalizer_reference_removal():
         ( 'cost of {}',                     'the cost of {}'                ), 
         ( '{} that is cheapest',            'cheapest of {}'                ),        
     ]   
-    compare_canonicalized_tup_list(str_tups)
+    compare_canonicalized_tup_list(str_tups, remove_references = True)
     
 def test_canonicalizer_stopwords():
     str_tups    = \
     [   
         ( 'is what {}',                     '{}'                            ),        
     ]   
-    compare_canonicalized_tup_list(str_tups)
+    compare_canonicalized_tup_list(str_tups, remove_stopwords = True)
     
