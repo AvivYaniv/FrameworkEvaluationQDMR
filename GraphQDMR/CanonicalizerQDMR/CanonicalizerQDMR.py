@@ -13,6 +13,9 @@ from nltk.tokenize import word_tokenize
 
 from GraphQDMR.CanonicalizerQDMR.CanonicalizationRules import CANONICALIZATION_RULES
 
+import logging, sys
+# logging.basicConfig(stream=sys.stderr, level=logging.DEBUG, format='%(levelname)s - %(message)s @ %(filename)s')
+
 class CanonicalizerQDMR:
     LANGUAGE        =   'english'
     
@@ -32,10 +35,10 @@ class CanonicalizerQDMR:
     
     # Normalization Section
     @staticmethod
-    def normalize(step_desc, language = None):
+    def normalize(step_desc, remove_stopwords = True, language = None):
         normalized_step_desc    = CanonicalizerQDMR.convert_to_common_case(step_desc)
-        # TODO : REVISE
-        # normalized_step_desc    = CanonicalizerQDMR.remove_stop_words(normalized_step_desc)
+        if remove_stopwords:
+            normalized_step_desc    = CanonicalizerQDMR.remove_stop_words(normalized_step_desc)
         normalized_step_desc    = CanonicalizerQDMR.steam(normalized_step_desc)
         normalized_step_desc    = CanonicalizerQDMR.normalize_whitespaces(normalized_step_desc)
         return normalized_step_desc 
@@ -59,13 +62,13 @@ class CanonicalizerQDMR:
     # Canonicalization Section
     # NOTE! Canonicalization includes Normalization     
     @staticmethod
-    def canonicalize(step_desc, language = None):
-        print(f'TODO DEBUG REMOVE : Original [{step_desc}]')
-        canonicalized_step_desc = CanonicalizerQDMR.normalize(step_desc, language)
-        print(f'TODO DEBUG REMOVE : Normalized [{step_desc}]')
+    def canonicalize(step_desc, remove_stopwords = True, language = None):
+        logging.debug(f'Original [{step_desc}]') 
+        canonicalized_step_desc = CanonicalizerQDMR.normalize(step_desc, remove_stopwords, language)
+        logging.debug(f'Normalized [{step_desc}]')
         for pattern_to_replace, replace_token in CANONICALIZATION_RULES.items():
             canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
-        print(f'TODO DEBUG REMOVE : Canonicalized [{step_desc}]')
+        logging.debug(f'Canonicalized [{step_desc}]')
         canonicalized_step_desc = CanonicalizerQDMR.normalize_whitespaces(canonicalized_step_desc)
-        print(f'TODO DEBUG REMOVE : Final [{step_desc}]') 
+        logging.debug(f'Final [{step_desc}]') 
         return canonicalized_step_desc
