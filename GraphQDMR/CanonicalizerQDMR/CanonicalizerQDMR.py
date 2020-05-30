@@ -9,7 +9,6 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
-from nltk.tokenize import word_tokenize
 
 from GraphQDMR.CanonicalizerQDMR.CanonicalizationRules import CANONICALIZATION_RULES
 
@@ -39,9 +38,9 @@ class CanonicalizerQDMR:
         normalized_step_desc        = CanonicalizerQDMR.convert_to_common_case(step_desc)
         if (remove_references if remove_references else True):
             normalized_step_desc    = normalized_step_desc.replace('{}', '')
+        normalized_step_desc        = CanonicalizerQDMR.steam(normalized_step_desc)
         if (remove_stopwords if remove_stopwords else True):
             normalized_step_desc    = CanonicalizerQDMR.remove_stop_words(normalized_step_desc)
-        normalized_step_desc        = CanonicalizerQDMR.steam(normalized_step_desc)
         normalized_step_desc        = CanonicalizerQDMR.normalize_whitespaces(normalized_step_desc)
         return normalized_step_desc 
 
