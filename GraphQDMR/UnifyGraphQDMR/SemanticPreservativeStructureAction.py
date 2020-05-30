@@ -57,6 +57,11 @@ class UnifySelectOrder(SemanticPreservativeStructureAction):
         for id, vertice in zip(ids, vertices):
             vertice.vid = id
 
+        # update graph_qdmr.vertices according to new ids
+        for vertice in vertices:
+            graph_qdmr.vertices[vertice.vid] = vertice
+
+
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR #GoldParserQDMR
 
 def test(decomposition, operators):
