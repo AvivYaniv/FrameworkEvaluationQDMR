@@ -1,5 +1,7 @@
 from .OperationQDMR import OperationQDMR
 
+from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
+
 class VertexQDMR:
     def __init__(self, operation: OperationQDMR, step_desc=None):
         self.step_desc  =   [step_desc] if step_desc else ['']  # list, to allow multi-operation vertices
@@ -47,14 +49,11 @@ class VertexQDMR:
         'the sabich' Vs. 'sabich'
         ...thus non-canonicalized comparision is errounous
         """
-        # TODO : @nadavg 
-        # Change to comparision by canonicalized form, with:
-        # Note: Shall remove all stop-words & references (i.e. '{}')
-        # from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
-        # CanonicalizerQDMR.canonicalize(s2) 
-        if v1.step_desc[0] < v2.step_desc[0]:
+        v1_desc = CanonicalizerQDMR.canonicalize(v1.step_desc)[0]
+        v2_desc = CanonicalizerQDMR.canonicalize(v2.step_desc)[0]
+        if v1_desc < v2_desc:
             return -1
-        if v1.step_desc[0] > v2.step_desc[0]:
+        if v1_desc > v2_desc:
             return 1
         else:
             len_incoming1 = len(v1.incoming)
