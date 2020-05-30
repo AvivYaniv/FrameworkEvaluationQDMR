@@ -1,12 +1,13 @@
 
+from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
+
 # TODO : TaBaLiZe!
 class PropotionalGraphMatcherQDMR:
     
     @staticmethod
     def match_vertices(lPrediction, lGold):
-        # TODO : Change to less strict string match
         return (lPrediction.operation == lGold.operation) and \
-               (lPrediction.step_desc == lGold.step_desc)
+               (CanonicalizerQDMR.canonicalize(lPrediction.step_desc) == CanonicalizerQDMR.canonicalize(lGold.step_desc))
     
     def match_vertices_lists(self, prediction_leafs, gold_leafs, with_child=False):
         matched_leafs = []
