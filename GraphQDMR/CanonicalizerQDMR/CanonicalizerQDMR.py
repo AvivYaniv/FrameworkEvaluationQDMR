@@ -2,6 +2,10 @@
 import re
 
 import nltk
+
+## NOTE! NOTE! NOTE! NOTE! NOTE! < RUN OF FIRST EXECUTION > NOTE! NOTE! NOTE! NOTE! NOTE! 
+# nltk.download()
+
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem.snowball import SnowballStemmer
