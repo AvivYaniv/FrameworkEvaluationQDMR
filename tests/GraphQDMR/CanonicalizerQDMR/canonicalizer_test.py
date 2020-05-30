@@ -3,12 +3,24 @@ import pytest
 
 from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
 
+def compare_canonicalized_tup_list(str_tups, remove_references = None, remove_stopwords = None, language = None):
+    str_tups = \
+        [                                                                                              
+            (                                                                                          
+                CanonicalizerQDMR.canonicalize(s1, remove_references, remove_stopwords, language),     
+                CanonicalizerQDMR.canonicalize(s2)                                                     
+            )                                                                                          
+            for s1, s2 in str_tups
+        ]                                                                                              
+    for (s1, s2) in str_tups:
+        assert s1 == s2
+
 def test_canonicalizer():
-    str_tups    =   \
+    str_tups    = \
     [   
-        # TODO
-        # ('cost of {}', 'the cost of {}'), 
-        # ('{} that is cheapest', 'cheapest of {}'),
+        # Reference Removal
+        ('cost of {}', 'the cost of {}'), 
+        ('{} that is cheapest', 'cheapest of {}'),
         
         ( '{} from st . paul',              '{} from st. paul'              ),
         ( 'cost of {}',                     'the cost of {}'                ),
@@ -22,6 +34,20 @@ def test_canonicalizer():
         # StopWords removal
         ( 'is what {}',                     '{}'                            ),        
     ]   
-    str_tups = [ (CanonicalizerQDMR.canonicalize(s1), CanonicalizerQDMR.canonicalize(s2)) for s1, s2 in str_tups]
-    for (s1, s2) in str_tups:
-        assert s1 == s2
+    compare_canonicalized_tup_list(str_tups)
+    
+def test_canonicalizer_reference_removal():
+    str_tups    = \
+    [   
+        ( 'cost of {}',                     'the cost of {}'                ), 
+        ( '{} that is cheapest',            'cheapest of {}'                ),        
+    ]   
+    compare_canonicalized_tup_list(str_tups)
+    
+def test_canonicalizer_stopwords():
+    str_tups    = \
+    [   
+        ( 'is what {}',                     '{}'                            ),        
+    ]   
+    compare_canonicalized_tup_list(str_tups)
+    
