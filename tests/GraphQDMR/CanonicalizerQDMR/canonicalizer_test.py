@@ -18,10 +18,6 @@ def compare_canonicalized_tup_list(str_tups, remove_references = None, remove_st
 def test_canonicalizer():
     str_tups    = \
     [   
-        # Reference Removal
-        ('cost of {}', 'the cost of {}'), 
-        ('{} that is cheapest', 'cheapest of {}'),
-        
         ( '{} from st . paul',              '{} from st. paul'              ),
         ( 'cost of {}',                     'the cost of {}'                ),
         ( '{} that are round trip',         '{} that is round trip'         ),
@@ -29,10 +25,7 @@ def test_canonicalizer():
         ( '{} leaving in the after noon',   '{} leaving after noon'         ),
         ( '{} in the early after noon',     '{} early after noon'           ),
         ( '{} that are after noon',         '{} after noon'                 ),
-        ( 'the Redskins',                   'redskins'                      ),
-        
-        # StopWords removal
-        ( 'is what {}',                     '{}'                            ),        
+        ( 'the Redskins',                   'redskins'                      ),        
     ]   
     compare_canonicalized_tup_list(str_tups)
     
