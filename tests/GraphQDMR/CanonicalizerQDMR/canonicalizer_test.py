@@ -17,7 +17,10 @@ def test_canonicalizer():
         ( '{} leaving in the after noon',   '{} leaving after noon'         ),
         ( '{} in the early after noon',     '{} early after noon'           ),
         ( '{} that are after noon',         '{} after noon'                 ),
-        ( 'the Redskins',                   'redskins'                      ),        
+        ( 'the Redskins',                   'redskins'                      ),
+        
+        # StopWords removal
+        ( 'is what {}',                     '{}'                            ),        
     ]   
     str_tups = [ (CanonicalizerQDMR.canonicalize(s1), CanonicalizerQDMR.canonicalize(s2)) for s1, s2 in str_tups]
     for (s1, s2) in str_tups:
