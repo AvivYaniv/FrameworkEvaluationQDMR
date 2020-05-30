@@ -54,6 +54,6 @@ class CanonicalizerQDMR:
     @staticmethod
     def canonicalize(step_desc, language = None):
         canonicalized_step_desc = CanonicalizerQDMR.normalize(step_desc, language)
-        for pattern_to_replace, replace_token in CANONICALIZATION_RULES:
+        for pattern_to_replace, replace_token in CANONICALIZATION_RULES.items():
             canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
         return canonicalized_step_desc

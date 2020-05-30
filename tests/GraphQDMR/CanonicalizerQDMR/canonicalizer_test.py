@@ -1,8 +1,9 @@
 
 import pytest
+
 from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
 
-def test_can():
+def test_canonicalizer():
     str_tups    =   \
     [               \
         ('sabich', 'sabich'), 
