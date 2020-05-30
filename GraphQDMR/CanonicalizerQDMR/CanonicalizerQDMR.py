@@ -16,6 +16,10 @@ class CanonicalizerQDMR:
     def convert_to_common_case(step_desc):
         return step_desc.lower() 
     
+    @staticmethod
+    def resolve_language(language = None):
+        return language if language else CanonicalizerQDMR.LANGUAGE
+    
     # Normalization Section
     @staticmethod
     def normalize(step_desc, language = None):
@@ -27,7 +31,7 @@ class CanonicalizerQDMR:
 
     @staticmethod
     def remove_stop_words(sentence, language = None):
-        language            = language if language else CanonicalizerQDMR.LANGUAGE
+        language            = CanonicalizerQDMR.resolve_language(language)
         stop_words          = set(stopwords.words('english'))   
         word_tokens         = word_tokenize(sentence)           
         filtered_sentence   = [ w for w in word_tokens if not w in stop_words ]
@@ -35,7 +39,7 @@ class CanonicalizerQDMR:
     
     @staticmethod
     def steam(sentence, language = None):
-        language            = language if language else CanonicalizerQDMR.LANGUAGE
+        language            = CanonicalizerQDMR.resolve_language(language)
         stemmer             = SnowballStemmer(language, ignore_stopwords=False)
         sentence            = word_tokenize(sentence)
         steamed_sentence    = [ stemmer.stem(word) for word in sentence ]
