@@ -1,8 +1,13 @@
 
-from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.StringGraphMatcherQDMR import StringGraphMatcherQDMR
 from GraphQDMR.UnifyGraphQDMR import UnifyGraphQDMR
 
+from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.StringGraphMatcherQDMR import StringGraphMatcherQDMR
+from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.NormalStringReprGraphMatcherQDMR import NormalStringGraphMatcherQDMR
+
 class EvaluatorQDMR:
+    
+    SIMPLE_GRAPH_MATCHER    = StringGraphMatcherQDMR
+    ADVANCED_GRAPH_MATCHER  = NormalStringGraphMatcherQDMR
 
     # TODO : Move to 'GraphMatcherQDMR' package
     @staticmethod
@@ -22,16 +27,13 @@ class EvaluatorQDMR:
                 loss_score += prediction_graph_set[operation]
 
         return loss_score
-
+    
     @staticmethod
     def evaluate(prediction_graph_qdmr, gold_graph_qdmr):
         unifyer = UnifyGraphQDMR() 
         unifyer.apply_vertices_actions(prediction_graph_qdmr)
-        # If string match return true
-        if StringGraphMatcherQDMR.check(prediction_graph_qdmr, gold_graph_qdmr):
+        if EvaluatorQDMR.SIMPLE_GRAPH_MATCHER.check(prediction_graph_qdmr, gold_graph_qdmr):
             return True
-        unifyer.apply_structure_actions(prediction_graph_qdmr)
-        # TODO : Check graph structure, by going on each vertex and check if all incoming vertex descriptions are the same (without comparing numbers, "as-is")
-        # More about; switch edges direction, then, go in BFS and check as decribed above
-
-
+        unifyer.apply_structure_actions(prediction_graph_qdmr)        
+        if EvaluatorQDMR.ADVANCED_GRAPH_MATCHER.check(prediction_graph_qdmr, gold_graph_qdmr):
+            return True

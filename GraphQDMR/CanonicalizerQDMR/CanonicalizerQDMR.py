@@ -35,12 +35,14 @@ class CanonicalizerQDMR:
     
     # Normalization Section
     @staticmethod
-    def normalize(step_desc, remove_stopwords = True, language = None):
-        normalized_step_desc    = CanonicalizerQDMR.convert_to_common_case(step_desc)
+    def normalize(step_desc, remove_references = True, remove_stopwords = True, language = None):
+        normalized_step_desc        = CanonicalizerQDMR.convert_to_common_case(step_desc)
+        if remove_references:
+            normalized_step_desc    = normalized_step_desc.replace('{}', '')
         if remove_stopwords:
             normalized_step_desc    = CanonicalizerQDMR.remove_stop_words(normalized_step_desc)
-        normalized_step_desc    = CanonicalizerQDMR.steam(normalized_step_desc)
-        normalized_step_desc    = CanonicalizerQDMR.normalize_whitespaces(normalized_step_desc)
+        normalized_step_desc        = CanonicalizerQDMR.steam(normalized_step_desc)
+        normalized_step_desc        = CanonicalizerQDMR.normalize_whitespaces(normalized_step_desc)
         return normalized_step_desc 
 
     @staticmethod
@@ -62,9 +64,9 @@ class CanonicalizerQDMR:
     # Canonicalization Section
     # NOTE! Canonicalization includes Normalization     
     @staticmethod
-    def canonicalize(step_desc, remove_stopwords = True, language = None):
+    def canonicalize(step_desc, remove_references = True, remove_stopwords = True, language = None):
         logging.debug(f'Original [{step_desc}]') 
-        canonicalized_step_desc = CanonicalizerQDMR.normalize(step_desc, remove_stopwords, language)
+        canonicalized_step_desc = CanonicalizerQDMR.normalize(step_desc, remove_references, remove_stopwords, language)
         logging.debug(f'Normalized [{step_desc}]')
         for pattern_to_replace, replace_token in CANONICALIZATION_RULES.items():
             canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
