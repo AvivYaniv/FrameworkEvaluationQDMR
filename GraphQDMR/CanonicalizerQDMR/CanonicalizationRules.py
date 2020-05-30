@@ -30,8 +30,13 @@ CANONICALIZATION_RULES =        \
 }
 
 CANONICALIZATION_KEEPER_RULES = \
-{                               \
+{   
+    # Keyword EXIST_ANY Section
+    'if exist'      : KeywordQDMR.EXIST_ANY.get_id(),
+    'if any'        : KeywordQDMR.EXIST_ANY.get_id(),
+    'if any exist'  : KeywordQDMR.EXIST_ANY.get_id(),
     'if there is'   : KeywordQDMR.EXIST_ANY.get_id(),
+    'if there are'  : KeywordQDMR.EXIST_ANY.get_id(),
     'is there any'  : KeywordQDMR.EXIST_ANY.get_id(),
 }
 
