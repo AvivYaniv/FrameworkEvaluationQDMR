@@ -36,7 +36,7 @@ class CanonicalizerQDMR:
     # Normalization Section
     @staticmethod
     def normalize(step_desc, remove_references = None, remove_stopwords = None, language = None):
-        normalized_step_desc        = CanonicalizerQDMR.convert_to_common_case(step_desc)
+        normalized_step_desc        = step_desc
         if (remove_references if remove_references else True):
             normalized_step_desc    = normalized_step_desc.replace('{}', '')
         normalized_step_desc        = CanonicalizerQDMR.steam(normalized_step_desc)
@@ -66,13 +66,14 @@ class CanonicalizerQDMR:
     @staticmethod
     def canonicalize(step_desc, remove_references = None, remove_stopwords = None, language = None):
         canonicalized_step_desc = step_desc
+        canonicalized_step_desc = CanonicalizerQDMR.convert_to_common_case(canonicalized_step_desc)
         logging.debug(f'Original [{canonicalized_step_desc}]')
         # First, replace stop-words combinations, that match to known keywords (i.e. 'if there any' is of keyword ANY_EXIST, under operation BOOLEAN)
         # thus keywords serve as a canonicalized form to compare meaningful relations (that are more specific than OPERATION)
         for pattern_to_replace, replace_token in CANONICALIZATION_KEEPER_RULES.items():
             canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
             logging.debug(f'Keyworded [{canonicalized_step_desc}]')
-        # Normalize, possibly removing references and stop-words, accordign to flag  
+        # Normalize, possibly removing references and stop-words, according to flag  
         canonicalized_step_desc = CanonicalizerQDMR.normalize(canonicalized_step_desc, remove_references, remove_stopwords, language)
         logging.debug(f'Normalized [{canonicalized_step_desc}]')
         # Convert to  Canonicalized form, by changing patterns (most important to clean special stop-words when remove_stopwords is false) 
