@@ -26,7 +26,7 @@ class PropotionalGraphMatcherQDMR:
         return matched_leafs
     
     def _find_strain_matches(self, lPrediction, lGold):
-        self.sMatched.add(lPrediction.vid)                 
+        self.sMatched.add(lGold.vid)                 
         matched_childs =                                        \
             self.match_vertices_lists(                          \
                 lPrediction.outgoing,                           \
