@@ -68,7 +68,7 @@ class CanonicalizerQDMR:
         canonicalized_step_desc = step_desc
         logging.debug(f'Original [{canonicalized_step_desc}]')
         # First, replace stop-words combinations, that match to known keywords (i.e. 'if there any' is of keyword ANY_EXIST, under operation BOOLEAN)
-        # thus keywords serve as a canonicalized form to compare meaningful relations (that are more specific than  OPERATION)
+        # thus keywords serve as a canonicalized form to compare meaningful relations (that are more specific than OPERATION)
         for pattern_to_replace, replace_token in CANONICALIZATION_KEEPER_RULES.items():
             canonicalized_step_desc = re.sub(pattern_to_replace, replace_token, canonicalized_step_desc)
             logging.debug(f'Keyworded [{canonicalized_step_desc}]')
