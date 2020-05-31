@@ -32,7 +32,7 @@ class VertexQDMR:
             yield v
 
     def merge_step_desc(self, new_step_desc):
-        self.step_desc.extend(new_step_desc)
+        self.step_desc = list(set(self.step_desc) | set(new_step_desc))
         self.step_desc.sort()
 
     # TODO : Add comparator to sort INcoming vertices list to unify form
