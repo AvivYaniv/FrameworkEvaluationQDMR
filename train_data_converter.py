@@ -9,6 +9,7 @@ from ReaderQDMR.GoldReader import GoldReader
 from GraphQDMR.EvaluatorQDMR.GraphMatcherQDMR.PropotionalGraphMatcherQDMR import PropotionalGraphMatcherQDMR
 
 if '__main__' == __name__:
+    """ create a new csv of the train data, after unify (=after activating VERTICES_ACTIONS and STRUCTURE_ACTIONS)"""
     input_csv_file = "train.csv"
     output_csv_file = "train_unified.csv"
 

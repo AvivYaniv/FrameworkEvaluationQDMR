@@ -1,7 +1,7 @@
 import csv
 import os
 
-from GraphQDMR import OperationQDMR as op
+from GraphQDMR import OperationQDMR as op, OperationQDMR
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR
 from ReaderQDMR import GoldReader
 
@@ -17,7 +17,6 @@ def get_file_location_at_parent_folder(file_name):
     return input_csv_file
 
 
-
 def save_csv_file(rows, output_csv_file):
     print(f"saving csv to {output_csv_file}")
     with open(output_csv_file, 'w', newline='', encoding='utf-8') as csvfile:
@@ -25,11 +24,9 @@ def save_csv_file(rows, output_csv_file):
         for r in rows:
             writer.writerow(r)
 
-
-###########################
-# OPERATORS list filters  #
-###########################
-"""filter QDMR queries according to their OPERATORS list"""
+#####################
+# Filter base class #
+#####################
 
 
 class Filter:
@@ -54,121 +51,26 @@ class Filter:
         raise NotImplementedError
 
 
-class ChainFilter(Filter):
-
-    def __init__(self, operator: op, min_len=None, max_len=None):
-        super(ChainFilter, self).__init__(min_len, max_len)
-        self.operator = str(operator).lower()
-        self.name = "chain_of_" + str(operator)
-
-    @staticmethod
-    def get_chain_list(operators, operator):
-        """return a list of tuples.
-        each tuple represent a chain: the 1st element is the start index of the chain,
-                                      the 2nd element is the length of this chain
-        e.g: for operators=["filter","filter","select",""filter","filter","filter"] and operator=filter,
-        the result is [(0,2),(3,3)]"""
-        chains = []
-        chain_start_index = 0
-        chain_len = 0
-        for i, temp_operator in enumerate(operators):
-            if temp_operator == operator:
-                if chain_len == 0:
-                    chain_start_index = i
-                chain_len += 1
-            else:
-                if chain_len >= 2:
-                    chains.append((chain_start_index, chain_len))
-                chain_len = 0
-
-        if temp_operator == operator and chain_len >= 2:
-            chains.append((chain_start_index, chain_len))
-        return chains
-
-    @staticmethod
-    def detect_chain(operators, operator):
-        """check if there is a chain with a single operator"""
-        chains = ChainFilter.get_chain_list(operators, operator)
-        if chains:  # there are chain/s with this operator
-            return True
-        return False
-
-    def filter(self, decomposition, operators):
-        """returns true if there is a chain of operator self.operator """
-        if not self.has_good_len(len(operators)):
-            return False
-        return ChainFilter.detect_chain(operators, self.operator)
-
-
-class PermutationFilter(Filter):
-    def __init__(self, operators, min_len=None, max_len=None):
-        super(PermutationFilter, self).__init__(min_len, max_len)
-        self.operator_sublist = [str(operator).lower() for operator in operators]
-        self.name = "permutation_of_" + '_'.join(self.operator_sublist)
-
-    def filter(self, decomposition, operators):
-        """returns true if self.operators_sublist (or a permutation of it) is a sublist of operators"""
-        def all_zeros(d):
-            """iterate on a dict, and return True <=> all the keys have value=0"""
-            for key in d.keys():
-                if d[key] != 0:
-                    return False
-            return True
-
-        if not self.has_good_len(len(operators)):
-            return False
-
-
-        list_len = len(operators)
-        sublist_len = len(self.operator_sublist)
-        if sublist_len > list_len:
-            return False
-
-        # for each operator from sublist, init appearances to 1
-        operator_apperances = {}
-        for operator in self.operator_sublist:
-            operator_apperances[operator] = 0
-
-        for operator in self.operator_sublist:
-            operator_apperances[operator] += 1
-
-        # --iterate on 'operators' with a sliding window--
-        # create first window:
-        for i in range(sublist_len):
-            temp_operator = operators[i]
-            if temp_operator in operator_apperances.keys():
-                operator_apperances[temp_operator] -= 1
-        if all_zeros(operator_apperances):
-            return True
-
-        # move with sliding window
-        for i in range(len(operators) - sublist_len):
-            old_oper = operators[i]
-            new_oper = operators[i + sublist_len - 1]
-            if old_oper in operator_apperances.keys():
-                operator_apperances[old_oper] += 1
-            if new_oper in operator_apperances.keys():
-                operator_apperances[new_oper] -= 1
-            if all_zeros(operator_apperances):
-                return True
-        return False
+###########################
+# OPERATORS list filters  #
+###########################
+"""filter QDMR queries according to their OPERATORS list"""
 
 
 class Interesting(Filter):
     """find graphs with interesting operations"""
-    boring_operations = [str(op.SELECT).lower(), str(op.FILTER).lower(), str(op.PROJECT).lower(),
-                         str(op.AGGREGATE).lower()]
 
-    # at reality, those operators can have 1/2 incoming edge/s
-    interesting_operations = [str(op.SUPERLATIVE).lower(), str(op.COMPARATIVE).lower(),
-                              str(op.UNION).lower(), str(op.INTERSECTION).lower(), str(op.DISCARD).lower(),
-                              str(op.SORT).lower(), str(op.BOOLEAN).lower(), str(op.ARITHMETIC).lower(),
-                              ]
-
-    def __init__(self, min_len=None, max_len=None):
+    def __init__(self, interesting_operations: OperationQDMR,
+                 min_len=None, max_len=None, min_interesting_operations=None):
         super(Interesting, self).__init__(min_len, max_len)
         self.name = "interesting"
-        self.min_interesting_operations = 3
+
+        if min_interesting_operations:
+            self.min_interesting_operations = min_interesting_operations
+        else:
+            self.min_interesting_operations = 1
+
+        self.interesting_operations = [str(op).lower() for op in interesting_operations]  # convert to string
 
     def filter(self, decomposition, operators):
         """returns true if graph is a 2 head snake """
@@ -177,7 +79,7 @@ class Interesting(Filter):
 
         interesting = 0
         for operator in operators:
-            if operator in Interesting.interesting_operations:
+            if operator in self.interesting_operations:
                 interesting += 1
         if interesting >= self.min_interesting_operations:
             return True
@@ -271,9 +173,7 @@ class GraphHasNodeWithIncomingEdges(Filter):
         return False
 
 
-
 ####################
-
 
 class FilterData:
     """ load csv file of gold qdmr questions, filter the questions and save to a new csv file.
@@ -340,17 +240,16 @@ class FilterData:
 
 
 if '__main__' == __name__:
-    # permutation_filter = PermutationFilter([op.SELECT, op.SELECT, op.FILTER, op.FILTER])
-    # FilterData.filter_data_according_to_operatorlist(filter=permutation_filter)
+    """examples of how to use the code above"""
 
-    # chain_filter = ChainFilter(op.FILTER)
-    # FilterData.filter_data_according_to_operatorlist(filter=chain_filter)
+    # example1: save graphs with at least 3 operations from([SELECT, BOOLEAN]), and the len of the graph is <= 7
+    interesting = Interesting([op.SELECT, op.BOOLEAN], min_interesting_operations=3, max_len=7)
+    FilterData.filter_data_according_to_operatorlist(filter=interesting)
 
-    # interesting = Interesting()
-    # FilterData.filter_data_according_to_operatorlist(filter=interesting)
+    # example2: save graphs with 'COMPARATIVE' operator vertex which has incoming 'AGGREGATE' and 'FILTER' edges
+    with_desiered_incoming_edges = GraphHasNodeWithIncomingEdges(operator=op.COMPARATIVE, incomings=[op.AGGREGATE, op.FILTER])
+    FilterData.filter_data_according_to_graph(filter=with_desiered_incoming_edges, output_csv_file="ron.csv")
 
-    #with_desiered_incoming_edges = GraphHasNodeWithIncomingEdges(operator=op.COMPARATIVE, incomings=[op.AGGREGATE, op.FILTER])
-    #FilterData.filter_data_according_to_graph(filter=with_desiered_incoming_edges, output_csv_file="ron.csv")
-
-    graph_path = GraphPath([op.UNION, op.AGGREGATE])
-    FilterData.filter_data_according_to_graph(filter=graph_path, output_csv_file="ron_un_agg.csv")
+    # example3: save graphs with chain of FILTERS of len >=2
+    graph_path = GraphPath([op.FILTER, op.FILTER])
+    FilterData.filter_data_according_to_graph(filter=graph_path)
