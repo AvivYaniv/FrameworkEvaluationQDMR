@@ -24,6 +24,10 @@ class UnifyFilterChains(SemanticPreservativeStructureAction):
                 if child_vertex.operation == OperationQDMR.FILTER and child_vertex.incoming.__len__() == 1: # found chain
                     child_vertex.set_incoming(vertex_qdmr.incoming)
                     child_vertex.merge_step_desc(vertex_qdmr.step_desc)
+
+                    vertex_qdmr.incoming[0].add_outgoining(child_vertex)
+                    vertex_qdmr.incoming[0].remove_from_outgoining(vertex_qdmr)
+
                     graph_qdmr.remove_vertex(vertex_qdmr)
                     UnifyFilterChains.dfsUtil(graph_qdmr, visited_dict, child_vertex)
                     return True
@@ -61,7 +65,7 @@ class UnifySelectOrder(SemanticPreservativeStructureAction):
         for vertice in vertices:
             graph_qdmr.vertices[vertice.vid] = vertice
 
-
+'''
 from ParserQDMR.GoldParserQDMR import GoldParserQDMR #GoldParserQDMR
 
 def test(decomposition, operators):
@@ -73,17 +77,25 @@ def test(decomposition, operators):
 
     print(g)
     #VisualizerQDMR.visualize(g)
-
-
+'''
+'''
 if __name__ == '__main__':
+
+
+    decomposition = "return flights ;return #1 from baltimore ;return #2 to dallas ;return #3 that are round trip"
+    operators = "['select', 'filter', 'filter', 'filter']"
+    test(decomposition, operators)
+
+
+    decomposition = "return flights; return #1 from Pittsburgh; return #1 that are round trip; return #1 to Dallas; return fares of #4; return #4, #5"
+    operators = "['select', 'filter', 'filter', 'filter', 'project', 'union']"
+    test(decomposition, operators)
+    
     decomposition = "return cubes ;return #1 that  are purple ;return #1 that  #2 is  to the right of ;return if  #3 is  shiny ;return if  #3 is  matte ;return #4 , #5"
     operators = "['select', 'filter', 'filter', 'boolean', 'boolean', 'union']"
     test(decomposition, operators)
+   
 
-'''
-    decomposition = "return flights ;return #1 that  are one way ;return #2 from atlanta ;return #3 to  pittsburgh ;return fares of #4 ;return #5 that  are the  lowest"
-    operators = "['select', 'filter', 'filter', 'filter', 'project', 'filter']"
-    test(decomposition, operators)
 
     decomposition = "return papers ;return #1 from  VLDB conference ;return #2 before 1995 ;return #2 after 2002 ;return #3 ,  #4 ;return authors of  #5"
     operators = "['select', 'filter', 'filter', 'filter', 'union', 'project']"
@@ -96,5 +108,6 @@ if __name__ == '__main__':
     decomposition = "return papers ;return #1 by H. V. Jagadish ;return #2 on  PVLDB ;return #3 after 2000 ;return number of  #4"
     operators = "['select', 'filter', 'filter', 'filter', 'aggregate']"
     test(decomposition, operators)
-'''
 
+
+'''

@@ -22,7 +22,11 @@ class VertexQDMR:
         
     def add_outgoining(self, out_v):
         self.outgoing.append(out_v)
-            
+
+    def remove_from_outgoining(self, out_v):
+        if out_v in self.outgoing:
+            self.outgoing.remove(out_v)
+
     def incoming_gen(self):
         for v in self.incoming:
             yield v
