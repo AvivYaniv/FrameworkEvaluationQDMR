@@ -39,6 +39,11 @@ CANONICALIZATION_KEEPER_RULES = \
     r'if there are'  : KeywordQDMR.EXIST_ANY.get_id(),
     r'is there any'  : KeywordQDMR.EXIST_ANY.get_id(),
     
+    # To match specific word, surround it's RegExp with \b
+    # Therefore: The RegExp r'\bto\b' 
+    # Does effect     'to the wild'
+    # Does NOT effect 'into the wild' 
+    
     # Keyword TO Section
     r'\bto\b'        : KeywordQDMR.TO.get_id(),
     
