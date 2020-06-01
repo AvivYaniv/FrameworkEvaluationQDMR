@@ -3,6 +3,8 @@ from enum import Enum, auto
 
 class KeywordQDMR(Enum):
     EXIST_ANY           = auto()
+    TO                  = auto()
+    FROM                = auto()
     
     def get_id(self):
         return f'@RESERVED{self.value}@'
