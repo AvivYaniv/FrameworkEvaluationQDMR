@@ -44,8 +44,6 @@ class GoldParserQDMR:
             print('Error! decomposition and operators mismatch')
         # Create the QDMR graph
         graph = GraphQDMR()
-        if i == 50:
-            print(50)
         # Building the QDMR graph according to input
         for raw_decomposition, operator in zip(decomposition_list, operators_list):
             v = VertexQDMR(                                             \

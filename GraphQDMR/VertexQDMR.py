@@ -2,24 +2,25 @@ from .OperationQDMR import OperationQDMR
 
 from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
 
+
 class VertexQDMR:
     def __init__(self, operation: OperationQDMR, step_desc=None):
-        self.step_desc  =   [step_desc] if step_desc else ['']  # list, to allow multi-operation vertices
-        self.operation  =   operation
-        self.incoming   =   []
-        self.outgoing   =   []
+        self.step_desc = [step_desc] if step_desc else ['']  # list, to allow multi-operation vertices
+        self.operation = operation
+        self.incoming = []
+        self.outgoing = []
 
         self.vid = -1  # Would be updated after adding to the graph
 
     def set_incoming(self, incoming):
-        self.incoming   = incoming
-        
+        self.incoming = incoming
+
     def set_outgoining(self, outgoining):
         self.outgoining = outgoining
-    
+
     def add_incoming(self, in_v):
         self.incoming.append(in_v)
-        
+
     def add_outgoining(self, out_v):
         self.outgoing.append(out_v)
 
@@ -30,7 +31,7 @@ class VertexQDMR:
     def incoming_gen(self):
         for v in self.incoming:
             yield v
-            
+
     def outgoing_gen(self):
         for v in self.outgoing:
             yield v
@@ -70,8 +71,8 @@ class VertexQDMR:
                 else:
                     incoming_copy1 = list(v1.incoming)
                     incoming_copy2 = list(v2.incoming)
-                    incoming_copy1.sort(key = VertexQDMR.get_key_for_lexicographic_comparator)
-                    incoming_copy2.sort(key = VertexQDMR.get_key_for_lexicographic_comparator)
+                    incoming_copy1.sort(key=VertexQDMR.get_key_for_lexicographic_comparator)
+                    incoming_copy2.sort(key=VertexQDMR.get_key_for_lexicographic_comparator)
                     return VertexQDMR.compare(incoming_copy1[0], incoming_copy2[0])
 
     def __repr__(self):
@@ -79,8 +80,8 @@ class VertexQDMR:
 
     def decomposition_for_train(self):
         """ vertice representation for train_data_converter.py"""
-        v_str           = f'{self.step_desc}'
-        incoming_vids   = [ v.vid for v in self.incoming_gen() ]
+        v_str = f'{self.step_desc}'
+        incoming_vids = [v.vid for v in self.incoming_gen()]
 
         if len(self.step_desc) > 1:
             incoming_vids = incoming_vids * len(self.step_desc)
@@ -90,10 +91,9 @@ class VertexQDMR:
             v_str = v_str.format(*incoming_vids)
         return v_str.replace("[", "").replace("]", "").replace("'", "")
 
-
     def __str__(self):
-        v_str           = f'{self.vid} : {self.operation} {self.step_desc}'
-        incoming_vids   = [ v.vid for v in self.incoming_gen() ]
+        v_str = f'{self.vid} : {self.operation} {self.step_desc}'
+        incoming_vids = [v.vid for v in self.incoming_gen()]
 
         if len(self.step_desc) > 1:
             incoming_vids = incoming_vids * len(self.step_desc)
@@ -104,4 +104,3 @@ class VertexQDMR:
             except IndexError:
                 v_str = v_str.format(*incoming_vids + [self.vid])
         return v_str
-        

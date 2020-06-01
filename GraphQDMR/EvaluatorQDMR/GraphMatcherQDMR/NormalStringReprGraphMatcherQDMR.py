@@ -1,4 +1,7 @@
 import textwrap
+from difflib import SequenceMatcher
+
+import spacy
 
 from GraphQDMR import GraphQDMR, VertexQDMR
 from GraphQDMR.CanonicalizerQDMR.CanonicalizerQDMR import CanonicalizerQDMR
@@ -90,3 +93,27 @@ class NormalStringGraphMatcherQDMR:
     def check(prediction_graph_qdmr, gold_graph_qdmr):
         return int(NormalStringReprBuilderQDMR(prediction_graph_qdmr, multiline=False).build() \
                == NormalStringReprBuilderQDMR(gold_graph_qdmr, multiline=False).build())
+
+
+parser = spacy.load('en_core_web_sm', disable=['ner'])
+
+
+class NonStrictNormalStringGraphMatcherQDMR:
+
+    @staticmethod
+    def clean_base(text):
+        parsed = parser(text)
+
+        res = []
+        for i in range(len(parsed)):
+            if not parsed[i].is_stop:
+                res.append(parsed[i].lemma_)
+
+        return res
+
+    @staticmethod
+    def check(prediction_graph_qdmr, gold_graph_qdmr):
+        sm = SequenceMatcher(a=NormalStringReprBuilderQDMR(prediction_graph_qdmr, multiline=False).build(),
+                             b=NormalStringReprBuilderQDMR(gold_graph_qdmr, multiline=False).build())
+
+        return sm.ratio()

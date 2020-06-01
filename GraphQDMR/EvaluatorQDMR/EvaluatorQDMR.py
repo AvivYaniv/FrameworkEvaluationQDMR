@@ -29,10 +29,8 @@ class EvaluatorQDMR:
         return loss_score
     
     @staticmethod
-    def evaluate(prediction_graph_qdmr, gold_graph_qdmr, advanced_matcher = ADVANCED_GRAPH_MATCHER, i=None):
+    def evaluate(prediction_graph_qdmr, gold_graph_qdmr, advanced_matcher = ADVANCED_GRAPH_MATCHER):
         unifyer = UnifyGraphQDMR.UnifyGraphQDMR()
-        if i == 50:
-            print(i)
         unifyer.apply_vertices_actions(gold_graph_qdmr)
         unifyer.apply_vertices_actions(prediction_graph_qdmr)
         if EvaluatorQDMR.SIMPLE_GRAPH_MATCHER.check(prediction_graph_qdmr, gold_graph_qdmr):

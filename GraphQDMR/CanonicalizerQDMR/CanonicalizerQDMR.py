@@ -16,6 +16,8 @@ from GraphQDMR.CanonicalizerQDMR.CanonicalizationRules import CANONICALIZATION_R
 import logging, sys
 # logging.basicConfig(stream=sys.stderr, level=logging.DEBUG, format='%(levelname)s - %(message)s @ %(filename)s')
 
+english_stopwords = set(stopwords.words('english'))
+
 class CanonicalizerQDMR:
     LANGUAGE        =   'english'
     
@@ -48,7 +50,7 @@ class CanonicalizerQDMR:
     @staticmethod
     def remove_stop_words(sentence, language = None):
         language            = CanonicalizerQDMR.resolve_language(language)
-        stop_words          = set(stopwords.words('english'))   
+        stop_words          = english_stopwords
         word_tokens         = word_tokenize(sentence)           
         filtered_sentence   = [ w for w in word_tokens if not w in stop_words ]
         return ' '.join(filtered_sentence)
