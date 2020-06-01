@@ -58,8 +58,11 @@ class NormalStringReprBuilderQDMR:
         for desc in v.step_desc:
             desc = CanonicalizerQDMR.canonicalize(desc, remove_references=False, remove_stopwords=True)  # canonicalize desc
             args = (self._build_arg(u) for u in v.incoming)
-            formatted_desc = desc.replace(" {", self.next() + "{").replace("} ", "}" + self.next()) \
-                .format(*args)
+            try:
+                formatted_desc = desc.replace(" {", self.next() + "{").replace("} ", "}" + self.next()) \
+                    .format(*args)
+            except IndexError:
+                return "========INVALID========"
 
             formatted_descs.append(formatted_desc)
 

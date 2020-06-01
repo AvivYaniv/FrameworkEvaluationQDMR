@@ -36,7 +36,7 @@ class GoldParserQDMR:
         return [int(m[GoldParserQDMR.REFERACE_PREFIX_LENGTH:]) for m in re.findall(GoldParserQDMR.REFERENCE_REGEXP, raw_decomposition)]
         
     @staticmethod
-    def parse(decomposition, operators):
+    def parse(decomposition, operators, i=None):
         operators_list      = GoldParserQDMR.operators_to_list(operators)
         decomposition_list  = GoldParserQDMR.decomposition_to_list(decomposition)
         # If decompositions and operators lengths are not the same
@@ -44,6 +44,8 @@ class GoldParserQDMR:
             print('Error! decomposition and operators mismatch')
         # Create the QDMR graph
         graph = GraphQDMR()
+        if i == 50:
+            print(50)
         # Building the QDMR graph according to input
         for raw_decomposition, operator in zip(decomposition_list, operators_list):
             v = VertexQDMR(                                             \

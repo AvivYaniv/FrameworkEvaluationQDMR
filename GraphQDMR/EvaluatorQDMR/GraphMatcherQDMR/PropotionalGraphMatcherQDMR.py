@@ -47,5 +47,7 @@ class PropotionalGraphMatcherQDMR:
         for lPrediction, lGold in matched_leafs:            
             self._find_strain_matches(lPrediction, lGold)  
         # Loss is matched vertices proportion to gold vertices number
-        return len(self.sMatched) / len(gold_graph_qdmr.vertices)
-    
+        r = len(self.sMatched) / len(gold_graph_qdmr.vertices)
+        if r == 2:
+            print(r)
+        return r
