@@ -32,11 +32,21 @@ CANONICALIZATION_RULES =        \
 CANONICALIZATION_KEEPER_RULES = \
 {   
     # Keyword EXIST_ANY Section
-    'if exist'      : KeywordQDMR.EXIST_ANY.get_id(),
-    'if any'        : KeywordQDMR.EXIST_ANY.get_id(),
-    'if any exist'  : KeywordQDMR.EXIST_ANY.get_id(),
-    'if there is'   : KeywordQDMR.EXIST_ANY.get_id(),
-    'if there are'  : KeywordQDMR.EXIST_ANY.get_id(),
-    'is there any'  : KeywordQDMR.EXIST_ANY.get_id(),
-}
-
+    r'if exist'      : KeywordQDMR.EXIST_ANY.get_id(),
+    r'if any'        : KeywordQDMR.EXIST_ANY.get_id(),
+    r'if any exist'  : KeywordQDMR.EXIST_ANY.get_id(),
+    r'if there is'   : KeywordQDMR.EXIST_ANY.get_id(),
+    r'if there are'  : KeywordQDMR.EXIST_ANY.get_id(),
+    r'is there any'  : KeywordQDMR.EXIST_ANY.get_id(),
+    
+    # To match specific word, surround it's RegExp with \b
+    # Therefore: The RegExp r'\bto\b' 
+    # Does effect     'to the wild'
+    # Does NOT effect 'into the wild' 
+    
+    # Keyword TO Section
+    r'\bto\b'        : KeywordQDMR.TO.get_id(),
+    
+    # Keyword FROM Section
+    r'\bfrom\b'      : KeywordQDMR.FROM.get_id(),    
+}   

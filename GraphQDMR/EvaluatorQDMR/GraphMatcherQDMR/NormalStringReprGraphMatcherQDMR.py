@@ -56,8 +56,8 @@ class NormalStringReprBuilderQDMR:
         formatted_descs = []
 
         for desc in v.step_desc:
-            desc = CanonicalizerQDMR.canonicalize(desc, remove_references=True, remove_stopwords=True)  # canonicalize desc
-            args = (self._build_arg(u) for u in v.incoming_gen())
+            desc = CanonicalizerQDMR.canonicalize(desc, remove_references=False, remove_stopwords=True)  # canonicalize desc
+            args = (self._build_arg(u) for u in v.incoming)
             formatted_desc = desc.replace(" {", self.next() + "{").replace("} ", "}" + self.next()) \
                 .format(*args)
 
@@ -85,5 +85,5 @@ class NormalStringReprBuilderQDMR:
 class NormalStringGraphMatcherQDMR:
     @staticmethod
     def check(prediction_graph_qdmr, gold_graph_qdmr):
-        return NormalStringReprBuilderQDMR(prediction_graph_qdmr, multiline=False).build() \
-               == NormalStringReprBuilderQDMR(gold_graph_qdmr, multiline=False).build()
+        return int(NormalStringReprBuilderQDMR(prediction_graph_qdmr, multiline=False).build() \
+               == NormalStringReprBuilderQDMR(gold_graph_qdmr, multiline=False).build())
