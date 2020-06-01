@@ -12,5 +12,5 @@ This package helps to filter the data. The following modules are included:
 <br />
 <br />**3. get_word_operators.py** - for any chosen word/string -
 <br />    - print operators histogram on steps that contain the word
-<br />    - create a csv file, with steps that contains the word """
+<br />    - create a csv file, with steps that contains the word
 
