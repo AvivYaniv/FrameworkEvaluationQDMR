@@ -36,6 +36,4 @@ class EvaluatorQDMR:
             return 1
         unifyer.apply_structure_actions(prediction_graph_qdmr)        
         result = advanced_matcher.check(prediction_graph_qdmr, gold_graph_qdmr)
-        if isinstance(result, (int, float)):
-            return result
-        return 1 if result else 0
+        return int(result)

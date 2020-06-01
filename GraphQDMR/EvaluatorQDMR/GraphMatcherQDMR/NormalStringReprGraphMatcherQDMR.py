@@ -85,5 +85,5 @@ class NormalStringReprBuilderQDMR:
 class NormalStringGraphMatcherQDMR:
     @staticmethod
     def check(prediction_graph_qdmr, gold_graph_qdmr):
-        return NormalStringReprBuilderQDMR(prediction_graph_qdmr, multiline=False).build() \
-               == NormalStringReprBuilderQDMR(gold_graph_qdmr, multiline=False).build()
+        return int(NormalStringReprBuilderQDMR(prediction_graph_qdmr, multiline=False).build() \
+               == NormalStringReprBuilderQDMR(gold_graph_qdmr, multiline=False).build())
