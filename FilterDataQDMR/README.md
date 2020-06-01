@@ -1,5 +1,6 @@
 # FilterDataQDMR
 This package helps to filter the data. The following modules are included:
+<br />
 <br />**1. FilterData.py** - filter the data according to operators list /graph structure. examples:
 <br />example1: save graphs with at least 3 operations from([SELECT, BOOLEAN]), and the graph has <= 7 vertices
 <br />example2: save graphs with 'COMPARATIVE' operator vertex which has incoming 'AGGREGATE' and 'FILTER' edges
