@@ -1,4 +1,5 @@
-[![HitCount](http://hits.dwyl.com/AvivYaniv/FrameworkEvaluationQDMR.svg)](http://hits.dwyl.com/AvivYaniv/FrameworkEvaluationQDMR)<br/>
+![visitors](https://visitor-badge.glitch.me/badge?page_id=AvivYaniv.FrameworkEvaluationQDMR.issue.1) <br/>
+[![HitCount](http://hits.dwyl.com/AvivYaniv/FrameworkEvaluationQDMR.svg)](http://hits.dwyl.com/AvivYaniv/FrameworkEvaluationQDMR) <br/>
 
 # FrameworkEvaluationQDMR
 This project is a framework for QDMR graphs as introcuced in the paper [Break It Down: A Question Understanding Benchmark](https://arxiv.org/abs/2001.11770)
